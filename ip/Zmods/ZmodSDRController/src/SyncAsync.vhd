@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --
--- File: SyncBase.vhd
+-- File: SyncAsync.vhd
 -- Author: Elod Gyorgy
 -- Original Project: HDMI input on 7-series Xilinx FPGA
 -- Date: 20 October 2014
@@ -39,25 +39,24 @@
 -------------------------------------------------------------------------------
 --
 -- Purpose:
--- This module synchronizes a signal (iIn) in one clock domain (InClk) with
--- another clock domain (OutClk) and provides it on oOut.
--- The number of FFs in the synchronizer chain
+-- This module synchronizes the asynchronous signal (aIn) with the OutClk clock
+-- domain and provides it on oOut. The number of FFs in the synchronizer chain
 -- can be configured with kStages. The reset value for oOut can be configured
--- with kResetTo. The asynchronous resets (aiReset and aoReset) with
--- synchronous deassertion are always active-high, and they should not be
--- asserted independently.
---
+-- with kResetTo. The asynchronous reset w/ synchronous de-assertion (aoReset)
+-- is always active-high.
+-- 
 -- Constraints:
--- # Replace <InstSyncBase> with path to SyncBase instance, keep rest unchanged
--- # Begin scope to SyncBase instance
--- current_instance [get_cells <InstSyncBase>]
+-- # Replace <InstSyncAsync> with path to SyncAsync instance, keep rest unchanged
+-- # Begin scope to SyncAsync instance
+-- current_instance [get_cells <InstSyncAsync>]
 -- # Input to synchronizer ignored for timing analysis
--- set_false_path -through [get_pins SyncAsyncx/aIn]
+-- set_false_path -through [get_ports -scoped_to_current_instance aIn]
 -- # Constrain internal synchronizer paths to half-period, which is expected to be easily met with ASYNC_REG=true
 -- set ClkPeriod [get_property PERIOD [get_clocks -of_objects [get_ports -scoped_to_current_instance OutClk]]]
--- set_max_delay -from [get_cells SyncAsyncx/oSyncStages_reg[*]] -to [get_cells SyncAsyncx/oSyncStages_reg[*]] [expr $ClkPeriod/2]
+-- set_max_delay -from [get_cells oSyncStages_reg[*]] -to [get_cells oSyncStages_reg[*]] [expr $ClkPeriod/2]
 -- current_instance -quiet
--- # End scope to SyncBase instance
+-- # End scope to SyncAsync instance
+--
 -------------------------------------------------------------------------------
 
 
@@ -73,45 +72,33 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity SyncBase is
+entity SyncAsync is
    Generic (
       kResetTo : std_logic := '0'; --value when reset and upon init
       kStages : natural := 2); --double sync by default
    Port (
-      aiReset : in STD_LOGIC; -- active-high asynchronous reset
-      InClk : in std_logic;
-      iIn : in STD_LOGIC;
-      aoReset : in STD_LOGIC; -- active-high asynchronous reset
+      aoReset : in STD_LOGIC; -- active-high asynchronous reset w/ sync de-assertion
+      aIn : in STD_LOGIC;
       OutClk : in STD_LOGIC;
       oOut : out STD_LOGIC);
    attribute keep_hierarchy : string;
-   attribute keep_hierarchy of SyncBase : entity is "yes";      
-end SyncBase;
+   attribute keep_hierarchy of SyncAsync : entity is "yes";
+end SyncAsync;
 
-architecture Behavioral of SyncBase is
-
-signal iIn_q : std_logic;
+architecture Behavioral of SyncAsync is
+signal oSyncStages : std_logic_vector(kStages-1 downto 0) := (others => kResetTo);
+attribute ASYNC_REG : string;
+attribute ASYNC_REG of oSyncStages: signal is "TRUE";
 begin
 
---By re-registering iIn on its own domain, we make sure iIn_q is glitch-free
-SyncSource: process(aiReset, InClk)
+Sync: process (OutClk, aoReset)
 begin
-   if (aiReset = '1') then
-      iIn_q <= kResetTo;
-   elsif Rising_Edge(InClk) then
-      iIn_q <= iIn;
+   if (aoReset = '1') then
+      oSyncStages <= (others => kResetTo);
+   elsif Rising_Edge(OutClk) then
+      oSyncStages <= oSyncStages(oSyncStages'high-1 downto 0) & aIn;
    end if;
-end process SyncSource;
-
---Crossing clock boundary here 
-SyncAsyncx: entity work.SyncAsync
-   generic map (
-      kResetTo => kResetTo,
-      kStages => kStages)
-   port map (
-      aoReset => aoReset,
-      aIn => iIn_q,
-      OutClk => OutClk,
-      oOut => oOut);
+end process Sync;
+oOut <= oSyncStages(oSyncStages'high);
 
 end Behavioral;

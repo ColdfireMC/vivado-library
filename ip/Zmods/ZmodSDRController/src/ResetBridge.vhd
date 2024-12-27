@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --
--- File: SyncBase.vhd
+-- File: ResetBridge.vhd
 -- Author: Elod Gyorgy
 -- Original Project: HDMI input on 7-series Xilinx FPGA
 -- Date: 20 October 2014
@@ -39,25 +39,28 @@
 -------------------------------------------------------------------------------
 --
 -- Purpose:
--- This module synchronizes a signal (iIn) in one clock domain (InClk) with
--- another clock domain (OutClk) and provides it on oOut.
--- The number of FFs in the synchronizer chain
--- can be configured with kStages. The reset value for oOut can be configured
--- with kResetTo. The asynchronous resets (aiReset and aoReset) with
--- synchronous deassertion are always active-high, and they should not be
--- asserted independently.
+-- This module is a reset-bridge. It takes a reset signal asynchronous to the 
+-- target clock domain (OutClk) and provides a safe asynchronous or synchronous
+-- reset for the OutClk domain (aoRst). The signal aoRst is asserted immediately 
+-- as aRst arrives, but is de-asserted synchronously with the OutClk rising
+-- edge. This means it can be used to safely reset any FF in the OutClk domain,
+-- respecting recovery time specs for FFs.
+-- The additional output register does not have placement and overly
+-- restrictive delay constraints, so that the tools can freely replicate it,
+-- if needed.
 --
 -- Constraints:
--- # Replace <InstSyncBase> with path to SyncBase instance, keep rest unchanged
--- # Begin scope to SyncBase instance
--- current_instance [get_cells <InstSyncBase>]
--- # Input to synchronizer ignored for timing analysis
--- set_false_path -through [get_pins SyncAsyncx/aIn]
+-- # Replace <InstResetBridge> with path to ResetBridge instance, keep rest unchanged
+-- # Begin scope to ResetBridge instance
+-- current_instance [get_cells <InstResetBridge>]
+-- # Reset input to the synchronizer must be ignored for timing analysis
+-- set_false_path -through [get_ports -scoped_to_current_instance aRst]
 -- # Constrain internal synchronizer paths to half-period, which is expected to be easily met with ASYNC_REG=true
 -- set ClkPeriod [get_property PERIOD [get_clocks -of_objects [get_ports -scoped_to_current_instance OutClk]]]
--- set_max_delay -from [get_cells SyncAsyncx/oSyncStages_reg[*]] -to [get_cells SyncAsyncx/oSyncStages_reg[*]] [expr $ClkPeriod/2]
+-- set_max_delay -from [get_cells OutputFF*.SyncAsyncx/oSyncStages_reg[*]] -to [get_cells OutputFF*.SyncAsyncx/oSyncStages_reg[*]] [expr $ClkPeriod/2]
 -- current_instance -quiet
--- # End scope to SyncBase instance
+-- # End scope to ResetBridge instance
+-- 
 -------------------------------------------------------------------------------
 
 
@@ -73,45 +76,57 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity SyncBase is
+entity ResetBridge is
    Generic (
-      kResetTo : std_logic := '0'; --value when reset and upon init
-      kStages : natural := 2); --double sync by default
+      kPolarity : std_logic := '1';
+      kStages : natural := 2;
+      kOutputFF : boolean := false); -- additional output FF for replication
    Port (
-      aiReset : in STD_LOGIC; -- active-high asynchronous reset
-      InClk : in std_logic;
-      iIn : in STD_LOGIC;
-      aoReset : in STD_LOGIC; -- active-high asynchronous reset
+      aRst : in STD_LOGIC; -- asynchronous reset; active-high, if kPolarity=1
       OutClk : in STD_LOGIC;
-      oOut : out STD_LOGIC);
+      aoRst : out STD_LOGIC);
    attribute keep_hierarchy : string;
-   attribute keep_hierarchy of SyncBase : entity is "yes";      
-end SyncBase;
+   attribute keep_hierarchy of ResetBridge : entity is "yes";
+end ResetBridge;
 
-architecture Behavioral of SyncBase is
-
-signal iIn_q : std_logic;
+architecture Behavioral of ResetBridge is
+signal aRst_int, aoRst_int : std_logic;
 begin
 
---By re-registering iIn on its own domain, we make sure iIn_q is glitch-free
-SyncSource: process(aiReset, InClk)
-begin
-   if (aiReset = '1') then
-      iIn_q <= kResetTo;
-   elsif Rising_Edge(InClk) then
-      iIn_q <= iIn;
-   end if;
-end process SyncSource;
+aRst_int <= kPolarity xnor aRst; --SyncAsync uses active-high reset
 
---Crossing clock boundary here 
-SyncAsyncx: entity work.SyncAsync
-   generic map (
-      kResetTo => kResetTo,
-      kStages => kStages)
-   port map (
-      aoReset => aoReset,
-      aIn => iIn_q,
-      OutClk => OutClk,
-      oOut => oOut);
+OutputFF_Yes: if kOutputFF generate
+   SyncAsyncx: entity work.SyncAsync
+      generic map (
+         kResetTo => '1',
+         kStages => kStages) --use double FF synchronizer
+      port map (
+         aoReset => aRst_int,
+         aIn => '0',
+         OutClk => OutClk,
+         oOut => aoRst_int);
+
+-- Output FF that can be replicated by the tools, if needed
+   OutputFF: process (OutClk, aoRst_int)
+   begin
+      if (aoRst_int = '1') then
+         aoRst <= kPolarity;
+      elsif Rising_Edge(OutClk) then
+         aoRst <= not kPolarity;
+      end if;
+   end process;
+end generate OutputFF_Yes;
+
+OutputFF_No: if not kOutputFF generate
+   SyncAsyncx: entity work.SyncAsync
+      generic map (
+         kResetTo => kPolarity,
+         kStages => kStages) --use double FF synchronizer
+      port map (
+         aoReset => aRst_int,
+         aIn => not kPolarity,
+         OutClk => OutClk,
+         oOut => aoRst);
+end generate OutputFF_No;
 
 end Behavioral;

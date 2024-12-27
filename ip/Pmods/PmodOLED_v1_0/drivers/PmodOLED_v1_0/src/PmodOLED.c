@@ -21,6 +21,10 @@
 /*    08/25/2017(ArtVVB):   Validated for Vivado 2016.4                       */
 /*                          Removed MB_Sleep calls                            */
 /*    02/17/2018(atangzwj): Validated for Vivado 2017.4                       */
+/*    08/09/2023(MihaiR):   Updated OLED_SetGPIOTristateBits fValue parameter */
+/*                          explanation and moved the XSpi_Stop command from  */
+/*                          the OLED_End() function to OLED_HostTerm()        */
+/*                          function.                                         */
 /*                                                                            */
 /******************************************************************************/
 
@@ -85,7 +89,6 @@ void OLED_Begin(PmodOLED *InstancePtr, u32 GPIO_Address, u32 SPI_Address,
 */
 void OLED_End(PmodOLED *InstancePtr) {
     OLED_Term(InstancePtr);
-    XSpi_Stop(&InstancePtr->OLEDSpi);
 }
 
 /* ------------------------------------------------------------ */
@@ -343,7 +346,7 @@ void OLED_SetGPIOBits(PmodOLED *InstancePtr, u8 bMask, u8 fValue) {
 **   Parameters:
 **      InstancePtr: the PmodOLED device to communicate with
 **      bMask:       the mask indicating which bits are affected
-**      fValue:      1 if the bits are set or 0 if their bits are reset
+**      fValue:      1 if the bits are set as inputs or 0 if their bits are set as outputs
 **
 **   Return Values:
 **      None

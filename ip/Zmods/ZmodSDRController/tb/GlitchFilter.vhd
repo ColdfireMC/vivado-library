@@ -1,10 +1,9 @@
 -------------------------------------------------------------------------------
 --
--- File: SyncBase.vhd
+-- File: GlitchFilter.vhd
 -- Author: Elod Gyorgy
 -- Original Project: HDMI input on 7-series Xilinx FPGA
--- Date: 20 October 2014
--- Last modification date: 05 October 2022
+-- Date: 22 October 2014
 --
 -------------------------------------------------------------------------------
 -- (c) 2014 Copyright Digilent Incorporated
@@ -39,27 +38,11 @@
 -------------------------------------------------------------------------------
 --
 -- Purpose:
--- This module synchronizes a signal (iIn) in one clock domain (InClk) with
--- another clock domain (OutClk) and provides it on oOut.
--- The number of FFs in the synchronizer chain
--- can be configured with kStages. The reset value for oOut can be configured
--- with kResetTo. The asynchronous resets (aiReset and aoReset) with
--- synchronous deassertion are always active-high, and they should not be
--- asserted independently.
---
--- Constraints:
--- # Replace <InstSyncBase> with path to SyncBase instance, keep rest unchanged
--- # Begin scope to SyncBase instance
--- current_instance [get_cells <InstSyncBase>]
--- # Input to synchronizer ignored for timing analysis
--- set_false_path -through [get_pins SyncAsyncx/aIn]
--- # Constrain internal synchronizer paths to half-period, which is expected to be easily met with ASYNC_REG=true
--- set ClkPeriod [get_property PERIOD [get_clocks -of_objects [get_ports -scoped_to_current_instance OutClk]]]
--- set_max_delay -from [get_cells SyncAsyncx/oSyncStages_reg[*]] -to [get_cells SyncAsyncx/oSyncStages_reg[*]] [expr $ClkPeriod/2]
--- current_instance -quiet
--- # End scope to SyncBase instance
+--    This module filters any pulses on sIn lasting less than the number of
+--    periods specified in kNoOfPeriodsToFilter. The output sOut will be
+--    delayed by kNoOfPeriodsToFilter cycles, but glitch-free.
+--  
 -------------------------------------------------------------------------------
-
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
@@ -73,45 +56,46 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity SyncBase is
+entity GlitchFilter is
    Generic (
-      kResetTo : std_logic := '0'; --value when reset and upon init
-      kStages : natural := 2); --double sync by default
+      kNoOfPeriodsToFilter : natural);
    Port (
-      aiReset : in STD_LOGIC; -- active-high asynchronous reset
-      InClk : in std_logic;
-      iIn : in STD_LOGIC;
-      aoReset : in STD_LOGIC; -- active-high asynchronous reset
-      OutClk : in STD_LOGIC;
-      oOut : out STD_LOGIC);
-   attribute keep_hierarchy : string;
-   attribute keep_hierarchy of SyncBase : entity is "yes";      
-end SyncBase;
+      SampleClk : in STD_LOGIC;
+      sIn : in STD_LOGIC;
+      sOut : out STD_LOGIC;
+      sRst : in STD_LOGIC);
+end GlitchFilter;
 
-architecture Behavioral of SyncBase is
-
-signal iIn_q : std_logic;
+architecture Behavioral of GlitchFilter is
+signal cntPeriods : natural range 0 to kNoOfPeriodsToFilter - 1 := kNoOfPeriodsToFilter - 1;
+signal sIn_q : std_logic;
 begin
 
---By re-registering iIn on its own domain, we make sure iIn_q is glitch-free
-SyncSource: process(aiReset, InClk)
-begin
-   if (aiReset = '1') then
-      iIn_q <= kResetTo;
-   elsif Rising_Edge(InClk) then
-      iIn_q <= iIn;
-   end if;
-end process SyncSource;
+Bypass: if kNoOfPeriodsToFilter = 0 generate
+   sOut <= sIn; 
+end generate Bypass;
 
---Crossing clock boundary here 
-SyncAsyncx: entity work.SyncAsync
-   generic map (
-      kResetTo => kResetTo,
-      kStages => kStages)
-   port map (
-      aoReset => aoReset,
-      aIn => iIn_q,
-      OutClk => OutClk,
-      oOut => oOut);
+Filter: if kNoOfPeriodsToFilter > 0 generate
+   process (SampleClk)
+   begin
+      if Rising_Edge(SampleClk) then
+         sIn_q <= sIn;
+         if (cntPeriods = 0) then
+            sOut <= sIn_q;
+         end if;
+      end if;
+   end process;
+   
+   PeriodCounter: process (SampleClk)
+   begin
+      if Rising_Edge(SampleClk) then
+         if (sIn_q /= sIn or sRst = '1') then --edge detected
+            cntPeriods <= kNoOfPeriodsToFilter - 1; --reset counter
+         elsif (cntPeriods /= 0) then
+            cntPeriods <= cntPeriods - 1; --count down
+         end if;
+      end if;
+   end process PeriodCounter;
+end generate Filter;
 
 end Behavioral;

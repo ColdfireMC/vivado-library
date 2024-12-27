@@ -2,7 +2,7 @@
 <spirit:component xmlns:xilinx="http://www.xilinx.com" xmlns:spirit="http://www.spiritconsortium.org/XMLSchema/SPIRIT/1685-2009" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <spirit:vendor>digilent.com</spirit:vendor>
   <spirit:library>user</spirit:library>
-  <spirit:name>ZmodDigitizerController</spirit:name>
+  <spirit:name>ZmodSDRController</spirit:name>
   <spirit:version>1.0</spirit:version>
   <spirit:busInterfaces>
     <spirit:busInterface>
@@ -92,6 +92,12 @@
           </spirit:physicalPort>
         </spirit:portMap>
       </spirit:portMaps>
+      <spirit:parameters>
+        <spirit:parameter>
+          <spirit:name>CLK_DOMAIN</spirit:name>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.SPI_IAP_TX.CLK_DOMAIN">SysClk100</spirit:value>
+        </spirit:parameter>
+      </spirit:parameters>
       <spirit:vendorExtensions>
         <xilinx:busInterfaceInfo>
           <xilinx:enablement>
@@ -131,6 +137,12 @@
           </spirit:physicalPort>
         </spirit:portMap>
       </spirit:portMaps>
+      <spirit:parameters>
+        <spirit:parameter>
+          <spirit:name>CLK_DOMAIN</spirit:name>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.SPI_IAP_RX.CLK_DOMAIN">SysClk100</spirit:value>
+        </spirit:parameter>
+      </spirit:parameters>
       <spirit:vendorExtensions>
         <xilinx:busInterfaceInfo>
           <xilinx:enablement>
@@ -144,6 +156,7 @@
       <spirit:busType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="clock" spirit:version="1.0"/>
       <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="clock_rtl" spirit:version="1.0"/>
       <spirit:slave/>
+      <spirit:connectionRequired>true</spirit:connectionRequired>
       <spirit:portMaps>
         <spirit:portMap>
           <spirit:logicalPort>
@@ -162,6 +175,14 @@
         <spirit:parameter>
           <spirit:name>FREQ_TOLERANCE_HZ</spirit:name>
           <spirit:value spirit:id="BUSIFPARAM_VALUE.SYSCLK100.FREQ_TOLERANCE_HZ">-1</spirit:value>
+        </spirit:parameter>
+        <spirit:parameter>
+          <spirit:name>FREQ_HZ</spirit:name>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.SYSCLK100.FREQ_HZ">100000000</spirit:value>
+        </spirit:parameter>
+        <spirit:parameter>
+          <spirit:name>ASSOCIATED_RESET</spirit:name>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.SYSCLK100.ASSOCIATED_RESET">aRst_n</spirit:value>
         </spirit:parameter>
       </spirit:parameters>
     </spirit:busInterface>
@@ -196,6 +217,12 @@
           </spirit:physicalPort>
         </spirit:portMap>
       </spirit:portMaps>
+      <spirit:parameters>
+        <spirit:parameter>
+          <spirit:name>CLK_DOMAIN</spirit:name>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.DATASTREAM.CLK_DOMAIN">DcoClkOut</spirit:value>
+        </spirit:parameter>
+      </spirit:parameters>
     </spirit:busInterface>
     <spirit:busInterface>
       <spirit:name>ZmodDcoClk</spirit:name>
@@ -214,16 +241,16 @@
       </spirit:portMaps>
       <spirit:parameters>
         <spirit:parameter>
-          <spirit:name>ASSOCIATED_BUSIF</spirit:name>
-          <spirit:value spirit:id="BUSIFPARAM_VALUE.ZMODDCOCLK.ASSOCIATED_BUSIF">diZmodADC_Data</spirit:value>
-        </spirit:parameter>
-        <spirit:parameter>
           <spirit:name>FREQ_HZ</spirit:name>
           <spirit:value spirit:id="BUSIFPARAM_VALUE.ZMODDCOCLK.FREQ_HZ"/>
         </spirit:parameter>
         <spirit:parameter>
           <spirit:name>FREQ_TOLERANCE_HZ</spirit:name>
           <spirit:value spirit:id="BUSIFPARAM_VALUE.ZMODDCOCLK.FREQ_TOLERANCE_HZ">-1</spirit:value>
+        </spirit:parameter>
+        <spirit:parameter>
+          <spirit:name>ASSOCIATED_BUSIF</spirit:name>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.ZMODDCOCLK.ASSOCIATED_BUSIF">diZmodSDR_Data</spirit:value>
         </spirit:parameter>
       </spirit:parameters>
     </spirit:busInterface>
@@ -258,7 +285,29 @@
       </spirit:parameters>
     </spirit:busInterface>
     <spirit:busInterface>
-      <spirit:name>diZmodADC_Data</spirit:name>
+      <spirit:name>ClockGenPriRefClk</spirit:name>
+      <spirit:busType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="clock" spirit:version="1.0"/>
+      <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="clock_rtl" spirit:version="1.0"/>
+      <spirit:slave/>
+      <spirit:portMaps>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>CLK</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>ClockGenPriRefClk</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+      </spirit:portMaps>
+      <spirit:parameters>
+        <spirit:parameter>
+          <spirit:name>FREQ_TOLERANCE_HZ</spirit:name>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.CLOCKGENPRIREFCLK.FREQ_TOLERANCE_HZ">-1</spirit:value>
+        </spirit:parameter>
+      </spirit:parameters>
+    </spirit:busInterface>
+    <spirit:busInterface>
+      <spirit:name>diZmodSDR_Data</spirit:name>
       <spirit:busType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="data" spirit:version="1.0"/>
       <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="data_rtl" spirit:version="1.0"/>
       <spirit:slave/>
@@ -268,57 +317,32 @@
             <spirit:name>DATA</spirit:name>
           </spirit:logicalPort>
           <spirit:physicalPort>
-            <spirit:name>diZmodADC_Data</spirit:name>
+            <spirit:name>diZmodSDR_Data</spirit:name>
           </spirit:physicalPort>
         </spirit:portMap>
       </spirit:portMaps>
     </spirit:busInterface>
     <spirit:busInterface>
-      <spirit:name>ExtChCalib</spirit:name>
-      <spirit:busType spirit:vendor="digilent.com" spirit:library="user" spirit:name="ZmodDigitizer_Calib" spirit:version="1.0"/>
-      <spirit:abstractionType spirit:vendor="digilent.com" spirit:library="user" spirit:name="ZmodDigitizer_Calib_rtl" spirit:version="1.0"/>
+      <spirit:name>aRst_n</spirit:name>
+      <spirit:busType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset" spirit:version="1.0"/>
+      <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset_rtl" spirit:version="1.0"/>
       <spirit:slave/>
       <spirit:portMaps>
         <spirit:portMap>
           <spirit:logicalPort>
-            <spirit:name>doExtCh1HgAddCoef</spirit:name>
+            <spirit:name>RST</spirit:name>
           </spirit:logicalPort>
           <spirit:physicalPort>
-            <spirit:name>doExtCh1HgAddCoef</spirit:name>
-          </spirit:physicalPort>
-        </spirit:portMap>
-        <spirit:portMap>
-          <spirit:logicalPort>
-            <spirit:name>doExtCh1HgMultCoef</spirit:name>
-          </spirit:logicalPort>
-          <spirit:physicalPort>
-            <spirit:name>doExtCh1HgMultCoef</spirit:name>
-          </spirit:physicalPort>
-        </spirit:portMap>
-        <spirit:portMap>
-          <spirit:logicalPort>
-            <spirit:name>doExtCh2HgMultCoef</spirit:name>
-          </spirit:logicalPort>
-          <spirit:physicalPort>
-            <spirit:name>doExtCh2HgMultCoef</spirit:name>
-          </spirit:physicalPort>
-        </spirit:portMap>
-        <spirit:portMap>
-          <spirit:logicalPort>
-            <spirit:name>doExtCh2HgAddCoef</spirit:name>
-          </spirit:logicalPort>
-          <spirit:physicalPort>
-            <spirit:name>doExtCh2HgAddCoef</spirit:name>
+            <spirit:name>aRst_n</spirit:name>
           </spirit:physicalPort>
         </spirit:portMap>
       </spirit:portMaps>
-      <spirit:vendorExtensions>
-        <xilinx:busInterfaceInfo>
-          <xilinx:enablement>
-            <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="BUSIF_ENABLEMENT.ExtChCalib" xilinx:dependency="$kExtCalibEn = true">true</xilinx:isEnabled>
-          </xilinx:enablement>
-        </xilinx:busInterfaceInfo>
-      </spirit:vendorExtensions>
+      <spirit:parameters>
+        <spirit:parameter>
+          <spirit:name>POLARITY</spirit:name>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.ARST_N.POLARITY" spirit:choiceRef="choice_list_9d8b0d81">ACTIVE_LOW</spirit:value>
+        </spirit:parameter>
+      </spirit:parameters>
     </spirit:busInterface>
   </spirit:busInterfaces>
   <spirit:model>
@@ -328,14 +352,14 @@
         <spirit:displayName>Synthesis</spirit:displayName>
         <spirit:envIdentifier>:vivado.xilinx.com:synthesis</spirit:envIdentifier>
         <spirit:language>VHDL</spirit:language>
-        <spirit:modelName>ZmodDigitizerController</spirit:modelName>
+        <spirit:modelName>ZmodSDRController</spirit:modelName>
         <spirit:fileSetRef>
           <spirit:localName>xilinx_anylanguagesynthesis_view_fileset</spirit:localName>
         </spirit:fileSetRef>
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>72e556bb</spirit:value>
+            <spirit:value>f6a13427</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -344,14 +368,14 @@
         <spirit:displayName>Simulation</spirit:displayName>
         <spirit:envIdentifier>:vivado.xilinx.com:simulation</spirit:envIdentifier>
         <spirit:language>VHDL</spirit:language>
-        <spirit:modelName>ZmodDigitizerController</spirit:modelName>
+        <spirit:modelName>ZmodSDRController</spirit:modelName>
         <spirit:fileSetRef>
           <spirit:localName>xilinx_anylanguagebehavioralsimulation_view_fileset</spirit:localName>
         </spirit:fileSetRef>
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>e5770d26</spirit:value>
+            <spirit:value>ce78f3fc</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -365,7 +389,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>4c86e367</spirit:value>
+            <spirit:value>76414183</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -379,7 +403,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>dcab95bf</spirit:value>
+            <spirit:value>7f431043</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -393,7 +417,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>d6a6b079</spirit:value>
+            <spirit:value>3eb517b4</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -407,7 +431,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>2097630c</spirit:value>
+            <spirit:value>0fef9a0f</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -590,87 +614,6 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>doExtCh1HgMultCoef</spirit:name>
-        <spirit:wire>
-          <spirit:direction>in</spirit:direction>
-          <spirit:vector>
-            <spirit:left spirit:format="long">17</spirit:left>
-            <spirit:right spirit:format="long">0</spirit:right>
-          </spirit:vector>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>std_logic_vector</spirit:typeName>
-              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-        </spirit:wire>
-      </spirit:port>
-      <spirit:port>
-        <spirit:name>doExtCh1HgAddCoef</spirit:name>
-        <spirit:wire>
-          <spirit:direction>in</spirit:direction>
-          <spirit:vector>
-            <spirit:left spirit:format="long">17</spirit:left>
-            <spirit:right spirit:format="long">0</spirit:right>
-          </spirit:vector>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>std_logic_vector</spirit:typeName>
-              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-        </spirit:wire>
-      </spirit:port>
-      <spirit:port>
-        <spirit:name>doExtCh2HgMultCoef</spirit:name>
-        <spirit:wire>
-          <spirit:direction>in</spirit:direction>
-          <spirit:vector>
-            <spirit:left spirit:format="long">17</spirit:left>
-            <spirit:right spirit:format="long">0</spirit:right>
-          </spirit:vector>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>std_logic_vector</spirit:typeName>
-              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-        </spirit:wire>
-      </spirit:port>
-      <spirit:port>
-        <spirit:name>doExtCh2HgAddCoef</spirit:name>
-        <spirit:wire>
-          <spirit:direction>in</spirit:direction>
-          <spirit:vector>
-            <spirit:left spirit:format="long">17</spirit:left>
-            <spirit:right spirit:format="long">0</spirit:right>
-          </spirit:vector>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>std_logic_vector</spirit:typeName>
-              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-        </spirit:wire>
-      </spirit:port>
-      <spirit:port>
-        <spirit:name>sTestMode</spirit:name>
-        <spirit:wire>
-          <spirit:direction>in</spirit:direction>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>std_logic</spirit:typeName>
-              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-        </spirit:wire>
-      </spirit:port>
-      <spirit:port>
         <spirit:name>sCmdTxAxisTvalid</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
@@ -789,7 +732,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>diZmodADC_Data</spirit:name>
+        <spirit:name>diZmodSDR_Data</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:vector>
@@ -806,7 +749,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>sZmodADC_SDIO</spirit:name>
+        <spirit:name>sZmodSDR_SDIO</spirit:name>
         <spirit:wire>
           <spirit:direction>inout</spirit:direction>
           <spirit:wireTypeDefs>
@@ -819,7 +762,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>sZmodADC_CS</spirit:name>
+        <spirit:name>sZmodSDR_CS</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:wireTypeDefs>
@@ -832,7 +775,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>sZmodADC_Sclk</spirit:name>
+        <spirit:name>sZmodSDR_Sclk</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:wireTypeDefs>
@@ -1018,34 +961,9 @@
         <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.kADC_Width" spirit:minimum="14" spirit:maximum="14" spirit:rangeType="long">14</spirit:value>
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="boolean">
-        <spirit:name>kExtCalibEn</spirit:name>
-        <spirit:displayName>Kextcaliben</spirit:displayName>
-        <spirit:value spirit:format="bool" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.kExtCalibEn">true</spirit:value>
-      </spirit:modelParameter>
-      <spirit:modelParameter spirit:dataType="boolean">
         <spirit:name>kExtCmdInterfaceEn</spirit:name>
         <spirit:displayName>Kextcmdinterfaceen</spirit:displayName>
         <spirit:value spirit:format="bool" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.kExtCmdInterfaceEn">false</spirit:value>
-      </spirit:modelParameter>
-      <spirit:modelParameter spirit:dataType="std_logic_vector(19 downto 0)">
-        <spirit:name>kCh1HgMultCoefStatic</spirit:name>
-        <spirit:displayName>Kch1hgmultcoefstatic</spirit:displayName>
-        <spirit:value spirit:format="bitString" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.kCh1HgMultCoefStatic" spirit:bitStringLength="20">0x10000</spirit:value>
-      </spirit:modelParameter>
-      <spirit:modelParameter spirit:dataType="std_logic_vector(19 downto 0)">
-        <spirit:name>kCh1HgAddCoefStatic</spirit:name>
-        <spirit:displayName>Kch1hgaddcoefstatic</spirit:displayName>
-        <spirit:value spirit:format="bitString" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.kCh1HgAddCoefStatic" spirit:bitStringLength="20">0x00000</spirit:value>
-      </spirit:modelParameter>
-      <spirit:modelParameter spirit:dataType="std_logic_vector(19 downto 0)">
-        <spirit:name>kCh2HgMultCoefStatic</spirit:name>
-        <spirit:displayName>Kch2hgmultcoefstatic</spirit:displayName>
-        <spirit:value spirit:format="bitString" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.kCh2HgMultCoefStatic" spirit:bitStringLength="20">0x10000</spirit:value>
-      </spirit:modelParameter>
-      <spirit:modelParameter spirit:dataType="std_logic_vector(19 downto 0)">
-        <spirit:name>kCh2HgAddCoefStatic</spirit:name>
-        <spirit:displayName>Kch2hgaddcoefstatic</spirit:displayName>
-        <spirit:value spirit:format="bitString" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.kCh2HgAddCoefStatic" spirit:bitStringLength="20">0x00000</spirit:value>
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="std_logic">
         <spirit:name>kRefSel</spirit:name>
@@ -1095,6 +1013,11 @@
   </spirit:model>
   <spirit:choices>
     <spirit:choice>
+      <spirit:name>choice_list_9d8b0d81</spirit:name>
+      <spirit:enumeration>ACTIVE_HIGH</spirit:enumeration>
+      <spirit:enumeration>ACTIVE_LOW</spirit:enumeration>
+    </spirit:choice>
+    <spirit:choice>
       <spirit:name>choice_pairs_6bbed71b</spirit:name>
       <spirit:enumeration spirit:text="Page 1">1</spirit:enumeration>
       <spirit:enumeration spirit:text="Page 0">0</spirit:enumeration>
@@ -1115,8 +1038,8 @@
       <spirit:enumeration spirit:text="PRIREF(FPGA)">1</spirit:enumeration>
     </spirit:choice>
     <spirit:choice>
-      <spirit:name>choice_pairs_b38c594e</spirit:name>
-      <spirit:enumeration spirit:text="ZmodDigitizer1430-125">6</spirit:enumeration>
+      <spirit:name>choice_pairs_ae8f0bdd</spirit:name>
+      <spirit:enumeration spirit:text="ZmodSDR 1450-122">6</spirit:enumeration>
     </spirit:choice>
     <spirit:choice>
       <spirit:name>choice_pairs_ca5276ad</spirit:name>
@@ -1129,7 +1052,7 @@
     <spirit:fileSet>
       <spirit:name>xilinx_anylanguagesynthesis_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>src/ConstrZmodDigitizer_ooc.xdc</spirit:name>
+        <spirit:name>src/ConstrZmodSDR_ooc.xdc</spirit:name>
         <spirit:userFileType>xdc</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
         <spirit:userFileType>USED_IN_out_of_context</spirit:userFileType>
@@ -1199,9 +1122,9 @@
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>src/ZmodDigitizerController.vhd</spirit:name>
+        <spirit:name>src/ZmodSDRController.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_a8b83567</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_e60a0e35</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
@@ -1268,7 +1191,7 @@
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>src/ZmodDigitizerController.vhd</spirit:name>
+        <spirit:name>src/ZmodSDRController.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
@@ -1276,16 +1199,16 @@
     <spirit:fileSet>
       <spirit:name>xilinx_xpgui_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>xgui/ZmodDigitizerController_v1_0.tcl</spirit:name>
+        <spirit:name>xgui/ZmodSDRController_v1_0.tcl</spirit:name>
         <spirit:fileType>tclSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_4c86e367</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_76414183</spirit:userFileType>
         <spirit:userFileType>XGUI_VERSION_2</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
       <spirit:name>xilinx_utilityxitfiles_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>gui/ZmodDigitizerController_v1_0.gtcl</spirit:name>
+        <spirit:name>gui/ZmodSDRController_v1_0.gtcl</spirit:name>
         <spirit:userFileType>GTCL</spirit:userFileType>
       </spirit:file>
       <spirit:file>
@@ -1300,7 +1223,7 @@
     <spirit:fileSet>
       <spirit:name>xilinx_productguide_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>docs/ZmodDigitizerController.pdf</spirit:name>
+        <spirit:name>docs/ZmodSDRController.pdf</spirit:name>
         <spirit:userFileType>pdf</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
@@ -1324,12 +1247,12 @@
       </spirit:file>
     </spirit:fileSet>
   </spirit:fileSets>
-  <spirit:description>ZmodDigitizerController</spirit:description>
+  <spirit:description>ZmodSDRController</spirit:description>
   <spirit:parameters>
     <spirit:parameter>
       <spirit:name>kZmodID</spirit:name>
       <spirit:displayName>ZmodID</spirit:displayName>
-      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.kZmodID" spirit:choiceRef="choice_pairs_b38c594e">6</spirit:value>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.kZmodID" spirit:choiceRef="choice_pairs_ae8f0bdd">6</spirit:value>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>kADC_ClkDiv</spirit:name>
@@ -1349,34 +1272,9 @@
       </spirit:vendorExtensions>
     </spirit:parameter>
     <spirit:parameter>
-      <spirit:name>kExtCalibEn</spirit:name>
-      <spirit:displayName>Enable external calibration signals</spirit:displayName>
-      <spirit:value spirit:format="bool" spirit:resolve="user" spirit:id="PARAM_VALUE.kExtCalibEn">true</spirit:value>
-    </spirit:parameter>
-    <spirit:parameter>
       <spirit:name>kExtCmdInterfaceEn</spirit:name>
       <spirit:displayName>Enable SPI Indirect Access Port</spirit:displayName>
       <spirit:value spirit:format="bool" spirit:resolve="user" spirit:id="PARAM_VALUE.kExtCmdInterfaceEn">false</spirit:value>
-    </spirit:parameter>
-    <spirit:parameter>
-      <spirit:name>kCh1HgMultCoefStatic</spirit:name>
-      <spirit:displayName>Ch1HgMultCoefStatic</spirit:displayName>
-      <spirit:value spirit:format="bitString" spirit:resolve="user" spirit:id="PARAM_VALUE.kCh1HgMultCoefStatic" spirit:bitStringLength="20">0x10000</spirit:value>
-    </spirit:parameter>
-    <spirit:parameter>
-      <spirit:name>kCh1HgAddCoefStatic</spirit:name>
-      <spirit:displayName>Ch1HgAddCoefStatic</spirit:displayName>
-      <spirit:value spirit:format="bitString" spirit:resolve="user" spirit:id="PARAM_VALUE.kCh1HgAddCoefStatic" spirit:bitStringLength="20">0x00000</spirit:value>
-    </spirit:parameter>
-    <spirit:parameter>
-      <spirit:name>kCh2HgMultCoefStatic</spirit:name>
-      <spirit:displayName>Ch2HgMultCoefStatic</spirit:displayName>
-      <spirit:value spirit:format="bitString" spirit:resolve="user" spirit:id="PARAM_VALUE.kCh2HgMultCoefStatic" spirit:bitStringLength="20">0x10000</spirit:value>
-    </spirit:parameter>
-    <spirit:parameter>
-      <spirit:name>kCh2HgAddCoefStatic</spirit:name>
-      <spirit:displayName>Ch2HgAddCoefStatic</spirit:displayName>
-      <spirit:value spirit:format="bitString" spirit:resolve="user" spirit:id="PARAM_VALUE.kCh2HgAddCoefStatic" spirit:bitStringLength="20">0x00000</spirit:value>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>Component_Name</spirit:name>
@@ -1430,9 +1328,6 @@
   <spirit:vendorExtensions>
     <xilinx:coreExtensions>
       <xilinx:supportedFamilies>
-        <xilinx:family xilinx:lifeCycle="Production">virtex7</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">qvirtex7</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">versal</xilinx:family>
         <xilinx:family xilinx:lifeCycle="Production">kintex7</xilinx:family>
         <xilinx:family xilinx:lifeCycle="Production">kintex7l</xilinx:family>
         <xilinx:family xilinx:lifeCycle="Production">qkintex7</xilinx:family>
@@ -1448,22 +1343,16 @@
         <xilinx:family xilinx:lifeCycle="Production">spartan7</xilinx:family>
         <xilinx:family xilinx:lifeCycle="Production">aspartan7</xilinx:family>
         <xilinx:family xilinx:lifeCycle="Production">zynquplus</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">virtexuplus</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">virtexuplusHBM</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">kintexu</xilinx:family>
       </xilinx:supportedFamilies>
       <xilinx:taxonomies>
         <xilinx:taxonomy>/UserIP</xilinx:taxonomy>
       </xilinx:taxonomies>
-      <xilinx:displayName>ZmodDigitizerController</xilinx:displayName>
+      <xilinx:displayName>ZmodSDRController</xilinx:displayName>
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
       <xilinx:vendorDisplayName>Digilent</xilinx:vendorDisplayName>
       <xilinx:vendorURL>https://www.digilent.com</xilinx:vendorURL>
-      <xilinx:coreRevision>5</xilinx:coreRevision>
-      <xilinx:upgrades>
-        <xilinx:canUpgradeFrom>xilinx.com:user:ZmodDigitizerController:1.0</xilinx:canUpgradeFrom>
-      </xilinx:upgrades>
-      <xilinx:coreCreationDateTime>2023-10-19T08:24:15Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>2</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2024-05-14T13:01:36Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
         <xilinx:tag xilinx:name="ui.data.coregen.df@7b2ddaf7_ARCHIVE_LOCATION">d:/Digilent/ZmodDigitizer</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.df@39d996ea_ARCHIVE_LOCATION">d:/Digilent/ZmodDigitizer</xilinx:tag>
@@ -5465,15 +5354,77 @@
         <xilinx:tag xilinx:name="ui.data.coregen.df@3ee0fd33_ARCHIVE_LOCATION">g:/viv-lib/ip/Zmods/ZmodDigitizerController</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.df@63da54a1_ARCHIVE_LOCATION">g:/viv-lib/ip/Zmods/ZmodDigitizerController</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.df@f92ba42_ARCHIVE_LOCATION">g:/viv-lib/ip/Zmods/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@52665747_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@5374a4a1_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@5e1fcdda_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@78f77b01_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@6b26de4a_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@5beb5602_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@5838bdfc_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@2d5edf0b_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@622ee2b4_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@79887a12_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@441736c1_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@2fcb0a96_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@4a4f552c_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@6f245485_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@2a84c50d_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@3b2dc148_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@5a1fc960_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@8888cfa_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@27da1487_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@623cab34_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@7808f32c_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@7d9124d1_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@60fa6fc_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@3c69f773_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@17892be2_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@4425582f_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@137c472d_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@1f4c767e_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@606cfcc7_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@363eb11c_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@6c14815d_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@4d66ded9_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@4df49871_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@7459f97d_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@47fca5f7_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@5625ecbe_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@5ebcbb51_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@53164ffd_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@214bfb14_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@174048af_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@5c4b23bf_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@7f4c887b_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@161ee60a_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@82b2d17_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@4066311f_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@55b61233_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@25767684_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@bc01974_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@1b515b26_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@48935f98_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@58176a57_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@147fde38_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@6f50ec53_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@1c730f9f_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@3d923b3b_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@2523fb8e_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@14208290_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@53580d52_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@46c4119_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@41b7d3a9_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@67c2da44_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@592b591b_ARCHIVE_LOCATION">c:/Temp/exlypsepspsps/sdr/ZmodDigitizerController</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
-      <xilinx:xilinxVersion>2023.1.2</xilinx:xilinxVersion>
-      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="b2b6f517"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="25c71b98"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="40408c1d"/>
-      <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="906686da"/>
-      <xilinx:checksum xilinx:scope="parameters" xilinx:value="df9264d9"/>
+      <xilinx:xilinxVersion>2022.1</xilinx:xilinxVersion>
+      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="63705488"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="03aeec08"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="ced54560"/>
+      <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="0034cd7e"/>
+      <xilinx:checksum xilinx:scope="parameters" xilinx:value="3ae99621"/>
       <xilinx:targetDRCs>
         <xilinx:targetDRC xilinx:tool="ipi">
           <xilinx:targetDRCOption xilinx:name="ignore_freq_hz" xilinx:value="true"/>
