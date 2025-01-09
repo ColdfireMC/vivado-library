@@ -1,119 +1,406 @@
-
-# Loading additional proc with user specified bodies to compute parameter values.
-source [file join [file dirname [file dirname [info script]]] gui/mig_nexys_video_v1_0.gtcl]
-
 # Definitional proc to organize widgets for parameters.
 proc init_gui { IPINST } {
-  ipgui::add_param $IPINST -name "Component_Name"
-  #Adding Page
-  set Page_0 [ipgui::add_page $IPINST -name "Page 0" -display_name {Main}]
-  ipgui::add_param $IPINST -name "RST_ACT_LOW" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "SIMULATION" -parent ${Page_0} -widget comboBox
-  ipgui::add_param $IPINST -name "IS_CLK_SHARED" -parent ${Page_0} -widget comboBox
+  ipgui::add_static_text $IPINST -name "Component_Name_Param" -text {Component_Name}
+  ipgui::add_param $IPINST -name "Component_Name" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "BANK_WIDTH_Param" -text {BANK_WIDTH}
+  ipgui::add_param $IPINST -name "BANK_WIDTH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "CK_WIDTH_Param" -text {CK_WIDTH}
+  ipgui::add_param $IPINST -name "CK_WIDTH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "COL_WIDTH_Param" -text {COL_WIDTH}
+  ipgui::add_param $IPINST -name "COL_WIDTH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "CS_WIDTH_Param" -text {CS_WIDTH}
+  ipgui::add_param $IPINST -name "CS_WIDTH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "nCS_PER_RANK_Param" -text {nCS_PER_RANK}
+  ipgui::add_param $IPINST -name "nCS_PER_RANK" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "CKE_WIDTH_Param" -text {CKE_WIDTH}
+  ipgui::add_param $IPINST -name "CKE_WIDTH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA_BUF_ADDR_WIDTH_Param" -text {DATA_BUF_ADDR_WIDTH}
+  ipgui::add_param $IPINST -name "DATA_BUF_ADDR_WIDTH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DQ_CNT_WIDTH_Param" -text {DQ_CNT_WIDTH}
+  ipgui::add_param $IPINST -name "DQ_CNT_WIDTH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DQ_PER_DM_Param" -text {DQ_PER_DM}
+  ipgui::add_param $IPINST -name "DQ_PER_DM" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DM_WIDTH_Param" -text {DM_WIDTH}
+  ipgui::add_param $IPINST -name "DM_WIDTH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DQ_WIDTH_Param" -text {DQ_WIDTH}
+  ipgui::add_param $IPINST -name "DQ_WIDTH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DQS_WIDTH_Param" -text {DQS_WIDTH}
+  ipgui::add_param $IPINST -name "DQS_WIDTH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DQS_CNT_WIDTH_Param" -text {DQS_CNT_WIDTH}
+  ipgui::add_param $IPINST -name "DQS_CNT_WIDTH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DRAM_WIDTH_Param" -text {DRAM_WIDTH}
+  ipgui::add_param $IPINST -name "DRAM_WIDTH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "ECC_Param" -text {ECC}
+  ipgui::add_param $IPINST -name "ECC" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA_WIDTH_Param" -text {DATA_WIDTH}
+  ipgui::add_param $IPINST -name "DATA_WIDTH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "ECC_TEST_Param" -text {ECC_TEST}
+  ipgui::add_param $IPINST -name "ECC_TEST" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "PAYLOAD_WIDTH_Param" -text {PAYLOAD_WIDTH}
+  ipgui::add_param $IPINST -name "PAYLOAD_WIDTH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "MEM_ADDR_ORDER_Param" -text {MEM_ADDR_ORDER}
+  ipgui::add_param $IPINST -name "MEM_ADDR_ORDER" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "nBANK_MACHS_Param" -text {nBANK_MACHS}
+  ipgui::add_param $IPINST -name "nBANK_MACHS" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "RANKS_Param" -text {RANKS}
+  ipgui::add_param $IPINST -name "RANKS" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "ODT_WIDTH_Param" -text {ODT_WIDTH}
+  ipgui::add_param $IPINST -name "ODT_WIDTH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "ROW_WIDTH_Param" -text {ROW_WIDTH}
+  ipgui::add_param $IPINST -name "ROW_WIDTH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "ADDR_WIDTH_Param" -text {ADDR_WIDTH}
+  ipgui::add_param $IPINST -name "ADDR_WIDTH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "USE_CS_PORT_Param" -text {USE_CS_PORT}
+  ipgui::add_param $IPINST -name "USE_CS_PORT" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "USE_DM_PORT_Param" -text {USE_DM_PORT}
+  ipgui::add_param $IPINST -name "USE_DM_PORT" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "USE_ODT_PORT_Param" -text {USE_ODT_PORT}
+  ipgui::add_param $IPINST -name "USE_ODT_PORT" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "IS_CLK_SHARED_Param" -text {IS_CLK_SHARED}
+  ipgui::add_param $IPINST -name "IS_CLK_SHARED" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "PHY_CONTROL_MASTER_BANK_Param" -text {PHY_CONTROL_MASTER_BANK}
+  ipgui::add_param $IPINST -name "PHY_CONTROL_MASTER_BANK" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "MEM_DENSITY_Param" -text {MEM_DENSITY}
+  ipgui::add_param $IPINST -name "MEM_DENSITY" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "MEM_SPEEDGRADE_Param" -text {MEM_SPEEDGRADE}
+  ipgui::add_param $IPINST -name "MEM_SPEEDGRADE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "MEM_DEVICE_WIDTH_Param" -text {MEM_DEVICE_WIDTH}
+  ipgui::add_param $IPINST -name "MEM_DEVICE_WIDTH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "AL_Param" -text {AL}
+  ipgui::add_param $IPINST -name "AL" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "nAL_Param" -text {nAL}
+  ipgui::add_param $IPINST -name "nAL" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "BURST_MODE_Param" -text {BURST_MODE}
+  ipgui::add_param $IPINST -name "BURST_MODE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "BURST_TYPE_Param" -text {BURST_TYPE}
+  ipgui::add_param $IPINST -name "BURST_TYPE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "CL_Param" -text {CL}
+  ipgui::add_param $IPINST -name "CL" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "CWL_Param" -text {CWL}
+  ipgui::add_param $IPINST -name "CWL" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "OUTPUT_DRV_Param" -text {OUTPUT_DRV}
+  ipgui::add_param $IPINST -name "OUTPUT_DRV" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "RTT_NOM_Param" -text {RTT_NOM}
+  ipgui::add_param $IPINST -name "RTT_NOM" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "RTT_WR_Param" -text {RTT_WR}
+  ipgui::add_param $IPINST -name "RTT_WR" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "ADDR_CMD_MODE_Param" -text {ADDR_CMD_MODE}
+  ipgui::add_param $IPINST -name "ADDR_CMD_MODE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "REG_CTRL_Param" -text {REG_CTRL}
+  ipgui::add_param $IPINST -name "REG_CTRL" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "CA_MIRROR_Param" -text {CA_MIRROR}
+  ipgui::add_param $IPINST -name "CA_MIRROR" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "VDD_OP_VOLT_Param" -text {VDD_OP_VOLT}
+  ipgui::add_param $IPINST -name "VDD_OP_VOLT" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "CLKIN_PERIOD_Param" -text {CLKIN_PERIOD}
+  ipgui::add_param $IPINST -name "CLKIN_PERIOD" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "CLKFBOUT_MULT_Param" -text {CLKFBOUT_MULT}
+  ipgui::add_param $IPINST -name "CLKFBOUT_MULT" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DIVCLK_DIVIDE_Param" -text {DIVCLK_DIVIDE}
+  ipgui::add_param $IPINST -name "DIVCLK_DIVIDE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "CLKOUT0_PHASE_Param" -text {CLKOUT0_PHASE}
+  ipgui::add_param $IPINST -name "CLKOUT0_PHASE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "CLKOUT0_DIVIDE_Param" -text {CLKOUT0_DIVIDE}
+  ipgui::add_param $IPINST -name "CLKOUT0_DIVIDE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "CLKOUT1_DIVIDE_Param" -text {CLKOUT1_DIVIDE}
+  ipgui::add_param $IPINST -name "CLKOUT1_DIVIDE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "CLKOUT2_DIVIDE_Param" -text {CLKOUT2_DIVIDE}
+  ipgui::add_param $IPINST -name "CLKOUT2_DIVIDE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "CLKOUT3_DIVIDE_Param" -text {CLKOUT3_DIVIDE}
+  ipgui::add_param $IPINST -name "CLKOUT3_DIVIDE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "MMCM_MULT_F_Param" -text {MMCM_MULT_F}
+  ipgui::add_param $IPINST -name "MMCM_MULT_F" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "MMCM_DIVCLK_DIVIDE_Param" -text {MMCM_DIVCLK_DIVIDE}
+  ipgui::add_param $IPINST -name "MMCM_DIVCLK_DIVIDE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "tCKE_Param" -text {tCKE}
+  ipgui::add_param $IPINST -name "tCKE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "tFAW_Param" -text {tFAW}
+  ipgui::add_param $IPINST -name "tFAW" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "tPRDI_Param" -text {tPRDI}
+  ipgui::add_param $IPINST -name "tPRDI" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "tRAS_Param" -text {tRAS}
+  ipgui::add_param $IPINST -name "tRAS" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "tRCD_Param" -text {tRCD}
+  ipgui::add_param $IPINST -name "tRCD" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "tREFI_Param" -text {tREFI}
+  ipgui::add_param $IPINST -name "tREFI" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "tRFC_Param" -text {tRFC}
+  ipgui::add_param $IPINST -name "tRFC" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "tRP_Param" -text {tRP}
+  ipgui::add_param $IPINST -name "tRP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "tRRD_Param" -text {tRRD}
+  ipgui::add_param $IPINST -name "tRRD" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "tRTP_Param" -text {tRTP}
+  ipgui::add_param $IPINST -name "tRTP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "tWTR_Param" -text {tWTR}
+  ipgui::add_param $IPINST -name "tWTR" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "tZQI_Param" -text {tZQI}
+  ipgui::add_param $IPINST -name "tZQI" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "tZQCS_Param" -text {tZQCS}
+  ipgui::add_param $IPINST -name "tZQCS" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "SIM_BYPASS_INIT_CAL_Param" -text {SIM_BYPASS_INIT_CAL}
+  ipgui::add_param $IPINST -name "SIM_BYPASS_INIT_CAL" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "SIMULATION_Param" -text {SIMULATION}
+  ipgui::add_param $IPINST -name "SIMULATION" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "BYTE_LANES_B0_Param" -text {BYTE_LANES_B0}
+  ipgui::add_param $IPINST -name "BYTE_LANES_B0" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "BYTE_LANES_B1_Param" -text {BYTE_LANES_B1}
+  ipgui::add_param $IPINST -name "BYTE_LANES_B1" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "BYTE_LANES_B2_Param" -text {BYTE_LANES_B2}
+  ipgui::add_param $IPINST -name "BYTE_LANES_B2" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "BYTE_LANES_B3_Param" -text {BYTE_LANES_B3}
+  ipgui::add_param $IPINST -name "BYTE_LANES_B3" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "BYTE_LANES_B4_Param" -text {BYTE_LANES_B4}
+  ipgui::add_param $IPINST -name "BYTE_LANES_B4" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA_CTL_B0_Param" -text {DATA_CTL_B0}
+  ipgui::add_param $IPINST -name "DATA_CTL_B0" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA_CTL_B1_Param" -text {DATA_CTL_B1}
+  ipgui::add_param $IPINST -name "DATA_CTL_B1" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA_CTL_B2_Param" -text {DATA_CTL_B2}
+  ipgui::add_param $IPINST -name "DATA_CTL_B2" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA_CTL_B3_Param" -text {DATA_CTL_B3}
+  ipgui::add_param $IPINST -name "DATA_CTL_B3" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA_CTL_B4_Param" -text {DATA_CTL_B4}
+  ipgui::add_param $IPINST -name "DATA_CTL_B4" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "PHY_0_BITLANES_Param" -text {PHY_0_BITLANES}
+  ipgui::add_param $IPINST -name "PHY_0_BITLANES" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "PHY_1_BITLANES_Param" -text {PHY_1_BITLANES}
+  ipgui::add_param $IPINST -name "PHY_1_BITLANES" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "PHY_2_BITLANES_Param" -text {PHY_2_BITLANES}
+  ipgui::add_param $IPINST -name "PHY_2_BITLANES" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "CK_BYTE_MAP_Param" -text {CK_BYTE_MAP}
+  ipgui::add_param $IPINST -name "CK_BYTE_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "ADDR_MAP_Param" -text {ADDR_MAP}
+  ipgui::add_param $IPINST -name "ADDR_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "BANK_MAP_Param" -text {BANK_MAP}
+  ipgui::add_param $IPINST -name "BANK_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "CAS_MAP_Param" -text {CAS_MAP}
+  ipgui::add_param $IPINST -name "CAS_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "CKE_ODT_BYTE_MAP_Param" -text {CKE_ODT_BYTE_MAP}
+  ipgui::add_param $IPINST -name "CKE_ODT_BYTE_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "CKE_MAP_Param" -text {CKE_MAP}
+  ipgui::add_param $IPINST -name "CKE_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "ODT_MAP_Param" -text {ODT_MAP}
+  ipgui::add_param $IPINST -name "ODT_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "CS_MAP_Param" -text {CS_MAP}
+  ipgui::add_param $IPINST -name "CS_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "PARITY_MAP_Param" -text {PARITY_MAP}
+  ipgui::add_param $IPINST -name "PARITY_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "RAS_MAP_Param" -text {RAS_MAP}
+  ipgui::add_param $IPINST -name "RAS_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "WE_MAP_Param" -text {WE_MAP}
+  ipgui::add_param $IPINST -name "WE_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DQS_BYTE_MAP_Param" -text {DQS_BYTE_MAP}
+  ipgui::add_param $IPINST -name "DQS_BYTE_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA0_MAP_Param" -text {DATA0_MAP}
+  ipgui::add_param $IPINST -name "DATA0_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA1_MAP_Param" -text {DATA1_MAP}
+  ipgui::add_param $IPINST -name "DATA1_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA2_MAP_Param" -text {DATA2_MAP}
+  ipgui::add_param $IPINST -name "DATA2_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA3_MAP_Param" -text {DATA3_MAP}
+  ipgui::add_param $IPINST -name "DATA3_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA4_MAP_Param" -text {DATA4_MAP}
+  ipgui::add_param $IPINST -name "DATA4_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA5_MAP_Param" -text {DATA5_MAP}
+  ipgui::add_param $IPINST -name "DATA5_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA6_MAP_Param" -text {DATA6_MAP}
+  ipgui::add_param $IPINST -name "DATA6_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA7_MAP_Param" -text {DATA7_MAP}
+  ipgui::add_param $IPINST -name "DATA7_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA8_MAP_Param" -text {DATA8_MAP}
+  ipgui::add_param $IPINST -name "DATA8_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA9_MAP_Param" -text {DATA9_MAP}
+  ipgui::add_param $IPINST -name "DATA9_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA10_MAP_Param" -text {DATA10_MAP}
+  ipgui::add_param $IPINST -name "DATA10_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA11_MAP_Param" -text {DATA11_MAP}
+  ipgui::add_param $IPINST -name "DATA11_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA12_MAP_Param" -text {DATA12_MAP}
+  ipgui::add_param $IPINST -name "DATA12_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA13_MAP_Param" -text {DATA13_MAP}
+  ipgui::add_param $IPINST -name "DATA13_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA14_MAP_Param" -text {DATA14_MAP}
+  ipgui::add_param $IPINST -name "DATA14_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA15_MAP_Param" -text {DATA15_MAP}
+  ipgui::add_param $IPINST -name "DATA15_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA16_MAP_Param" -text {DATA16_MAP}
+  ipgui::add_param $IPINST -name "DATA16_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA17_MAP_Param" -text {DATA17_MAP}
+  ipgui::add_param $IPINST -name "DATA17_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "MASK0_MAP_Param" -text {MASK0_MAP}
+  ipgui::add_param $IPINST -name "MASK0_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "MASK1_MAP_Param" -text {MASK1_MAP}
+  ipgui::add_param $IPINST -name "MASK1_MAP" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "SLOT_0_CONFIG_Param" -text {SLOT_0_CONFIG}
+  ipgui::add_param $IPINST -name "SLOT_0_CONFIG" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "SLOT_1_CONFIG_Param" -text {SLOT_1_CONFIG}
+  ipgui::add_param $IPINST -name "SLOT_1_CONFIG" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "IBUF_LPWR_MODE_Param" -text {IBUF_LPWR_MODE}
+  ipgui::add_param $IPINST -name "IBUF_LPWR_MODE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA_IO_IDLE_PWRDWN_Param" -text {DATA_IO_IDLE_PWRDWN}
+  ipgui::add_param $IPINST -name "DATA_IO_IDLE_PWRDWN" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "BANK_TYPE_Param" -text {BANK_TYPE}
+  ipgui::add_param $IPINST -name "BANK_TYPE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DATA_IO_PRIM_TYPE_Param" -text {DATA_IO_PRIM_TYPE}
+  ipgui::add_param $IPINST -name "DATA_IO_PRIM_TYPE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "CKE_ODT_AUX_Param" -text {CKE_ODT_AUX}
+  ipgui::add_param $IPINST -name "CKE_ODT_AUX" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "USER_REFRESH_Param" -text {USER_REFRESH}
+  ipgui::add_param $IPINST -name "USER_REFRESH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "WRLVL_Param" -text {WRLVL}
+  ipgui::add_param $IPINST -name "WRLVL" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "ORDERING_Param" -text {ORDERING}
+  ipgui::add_param $IPINST -name "ORDERING" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "CALIB_ROW_ADD_Param" -text {CALIB_ROW_ADD}
+  ipgui::add_param $IPINST -name "CALIB_ROW_ADD" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "CALIB_COL_ADD_Param" -text {CALIB_COL_ADD}
+  ipgui::add_param $IPINST -name "CALIB_COL_ADD" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "CALIB_BA_ADD_Param" -text {CALIB_BA_ADD}
+  ipgui::add_param $IPINST -name "CALIB_BA_ADD" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "TCQ_Param" -text {TCQ}
+  ipgui::add_param $IPINST -name "TCQ" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "IDELAY_ADJ_Param" -text {IDELAY_ADJ}
+  ipgui::add_param $IPINST -name "IDELAY_ADJ" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "FINE_PER_BIT_Param" -text {FINE_PER_BIT}
+  ipgui::add_param $IPINST -name "FINE_PER_BIT" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "CENTER_COMP_MODE_Param" -text {CENTER_COMP_MODE}
+  ipgui::add_param $IPINST -name "CENTER_COMP_MODE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "PI_VAL_ADJ_Param" -text {PI_VAL_ADJ}
+  ipgui::add_param $IPINST -name "PI_VAL_ADJ" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "IODELAY_GRP0_Param" -text {IODELAY_GRP0}
+  ipgui::add_param $IPINST -name "IODELAY_GRP0" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "IODELAY_GRP1_Param" -text {IODELAY_GRP1}
+  ipgui::add_param $IPINST -name "IODELAY_GRP1" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "SYSCLK_TYPE_Param" -text {SYSCLK_TYPE}
+  ipgui::add_param $IPINST -name "SYSCLK_TYPE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "REFCLK_TYPE_Param" -text {REFCLK_TYPE}
+  ipgui::add_param $IPINST -name "REFCLK_TYPE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "SYS_RST_PORT_Param" -text {SYS_RST_PORT}
+  ipgui::add_param $IPINST -name "SYS_RST_PORT" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "FPGA_SPEED_GRADE_Param" -text {FPGA_SPEED_GRADE}
+  ipgui::add_param $IPINST -name "FPGA_SPEED_GRADE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "CMD_PIPE_PLUS1_Param" -text {CMD_PIPE_PLUS1}
+  ipgui::add_param $IPINST -name "CMD_PIPE_PLUS1" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DRAM_TYPE_Param" -text {DRAM_TYPE}
+  ipgui::add_param $IPINST -name "DRAM_TYPE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "CAL_WIDTH_Param" -text {CAL_WIDTH}
+  ipgui::add_param $IPINST -name "CAL_WIDTH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "STARVE_LIMIT_Param" -text {STARVE_LIMIT}
+  ipgui::add_param $IPINST -name "STARVE_LIMIT" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "REF_CLK_MMCM_IODELAY_CTRL_Param" -text {REF_CLK_MMCM_IODELAY_CTRL}
+  ipgui::add_param $IPINST -name "REF_CLK_MMCM_IODELAY_CTRL" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "REFCLK_FREQ_Param" -text {REFCLK_FREQ}
+  ipgui::add_param $IPINST -name "REFCLK_FREQ" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DIFF_TERM_REFCLK_Param" -text {DIFF_TERM_REFCLK}
+  ipgui::add_param $IPINST -name "DIFF_TERM_REFCLK" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "tCK_Param" -text {tCK}
+  ipgui::add_param $IPINST -name "tCK" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "nCK_PER_CLK_Param" -text {nCK_PER_CLK}
+  ipgui::add_param $IPINST -name "nCK_PER_CLK" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DIFF_TERM_SYSCLK_Param" -text {DIFF_TERM_SYSCLK}
+  ipgui::add_param $IPINST -name "DIFF_TERM_SYSCLK" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "UI_EXTRA_CLOCKS_Param" -text {UI_EXTRA_CLOCKS}
+  ipgui::add_param $IPINST -name "UI_EXTRA_CLOCKS" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "C_S_AXI_ID_WIDTH_Param" -text {C_S_AXI_ID_WIDTH}
+  ipgui::add_param $IPINST -name "C_S_AXI_ID_WIDTH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "C_S_AXI_MEM_SIZE_Param" -text {C_S_AXI_MEM_SIZE}
+  ipgui::add_param $IPINST -name "C_S_AXI_MEM_SIZE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "C_S_AXI_ADDR_WIDTH_Param" -text {C_S_AXI_ADDR_WIDTH}
+  ipgui::add_param $IPINST -name "C_S_AXI_ADDR_WIDTH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "C_S_AXI_DATA_WIDTH_Param" -text {C_S_AXI_DATA_WIDTH}
+  ipgui::add_param $IPINST -name "C_S_AXI_DATA_WIDTH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "C_MC_nCK_PER_CLK_Param" -text {C_MC_nCK_PER_CLK}
+  ipgui::add_param $IPINST -name "C_MC_nCK_PER_CLK" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "C_S_AXI_SUPPORTS_NARROW_BURST_Param" -text {C_S_AXI_SUPPORTS_NARROW_BURST}
+  ipgui::add_param $IPINST -name "C_S_AXI_SUPPORTS_NARROW_BURST" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "C_RD_WR_ARB_ALGORITHM_Param" -text {C_RD_WR_ARB_ALGORITHM}
+  ipgui::add_param $IPINST -name "C_RD_WR_ARB_ALGORITHM" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "C_S_AXI_REG_EN0_Param" -text {C_S_AXI_REG_EN0}
+  ipgui::add_param $IPINST -name "C_S_AXI_REG_EN0" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "C_S_AXI_REG_EN1_Param" -text {C_S_AXI_REG_EN1}
+  ipgui::add_param $IPINST -name "C_S_AXI_REG_EN1" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "C_S_AXI_CTRL_ADDR_WIDTH_Param" -text {C_S_AXI_CTRL_ADDR_WIDTH}
+  ipgui::add_param $IPINST -name "C_S_AXI_CTRL_ADDR_WIDTH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "C_S_AXI_CTRL_DATA_WIDTH_Param" -text {C_S_AXI_CTRL_DATA_WIDTH}
+  ipgui::add_param $IPINST -name "C_S_AXI_CTRL_DATA_WIDTH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "C_S_AXI_BASEADDR_Param" -text {C_S_AXI_BASEADDR}
+  ipgui::add_param $IPINST -name "C_S_AXI_BASEADDR" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "C_ECC_ONOFF_RESET_VALUE_Param" -text {C_ECC_ONOFF_RESET_VALUE}
+  ipgui::add_param $IPINST -name "C_ECC_ONOFF_RESET_VALUE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "C_ECC_CE_COUNTER_WIDTH_Param" -text {C_ECC_CE_COUNTER_WIDTH}
+  ipgui::add_param $IPINST -name "C_ECC_CE_COUNTER_WIDTH" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "DEBUG_PORT_Param" -text {DEBUG_PORT}
+  ipgui::add_param $IPINST -name "DEBUG_PORT" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "TEMP_MON_CONTROL_Param" -text {TEMP_MON_CONTROL}
+  ipgui::add_param $IPINST -name "TEMP_MON_CONTROL" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "FPGA_VOLT_TYPE_Param" -text {FPGA_VOLT_TYPE}
+  ipgui::add_param $IPINST -name "FPGA_VOLT_TYPE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "RST_ACT_LOW_Param" -text {RST_ACT_LOW}
+  ipgui::add_param $IPINST -name "RST_ACT_LOW" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "MMCM_CLKOUT0_EN_Param" -text {MMCM_CLKOUT0_EN}
+  ipgui::add_param $IPINST -name "MMCM_CLKOUT0_EN" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "MMCM_CLKOUT1_EN_Param" -text {MMCM_CLKOUT1_EN}
+  ipgui::add_param $IPINST -name "MMCM_CLKOUT1_EN" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "MMCM_CLKOUT2_EN_Param" -text {MMCM_CLKOUT2_EN}
+  ipgui::add_param $IPINST -name "MMCM_CLKOUT2_EN" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "MMCM_CLKOUT3_EN_Param" -text {MMCM_CLKOUT3_EN}
+  ipgui::add_param $IPINST -name "MMCM_CLKOUT3_EN" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "MMCM_CLKOUT4_EN_Param" -text {MMCM_CLKOUT4_EN}
+  ipgui::add_param $IPINST -name "MMCM_CLKOUT4_EN" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "MMCM_CLKOUT0_DIVIDE_Param" -text {MMCM_CLKOUT0_DIVIDE}
+  ipgui::add_param $IPINST -name "MMCM_CLKOUT0_DIVIDE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "MMCM_CLKOUT1_DIVIDE_Param" -text {MMCM_CLKOUT1_DIVIDE}
+  ipgui::add_param $IPINST -name "MMCM_CLKOUT1_DIVIDE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "MMCM_CLKOUT2_DIVIDE_Param" -text {MMCM_CLKOUT2_DIVIDE}
+  ipgui::add_param $IPINST -name "MMCM_CLKOUT2_DIVIDE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "MMCM_CLKOUT3_DIVIDE_Param" -text {MMCM_CLKOUT3_DIVIDE}
+  ipgui::add_param $IPINST -name "MMCM_CLKOUT3_DIVIDE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "MMCM_CLKOUT4_DIVIDE_Param" -text {MMCM_CLKOUT4_DIVIDE}
+  ipgui::add_param $IPINST -name "MMCM_CLKOUT4_DIVIDE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "MMCM_CLKOUT0_FREQ_Param" -text {MMCM_CLKOUT0_FREQ}
+  ipgui::add_param $IPINST -name "MMCM_CLKOUT0_FREQ" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "MMCM_CLKOUT1_FREQ_Param" -text {MMCM_CLKOUT1_FREQ}
+  ipgui::add_param $IPINST -name "MMCM_CLKOUT1_FREQ" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "MMCM_CLKOUT2_FREQ_Param" -text {MMCM_CLKOUT2_FREQ}
+  ipgui::add_param $IPINST -name "MMCM_CLKOUT2_FREQ" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "MMCM_CLKOUT3_FREQ_Param" -text {MMCM_CLKOUT3_FREQ}
+  ipgui::add_param $IPINST -name "MMCM_CLKOUT3_FREQ" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "MMCM_CLKOUT4_FREQ_Param" -text {MMCM_CLKOUT4_FREQ}
+  ipgui::add_param $IPINST -name "MMCM_CLKOUT4_FREQ" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "MMCM_VCO_Param" -text {MMCM_VCO}
+  ipgui::add_param $IPINST -name "MMCM_VCO" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "aresetn.POLARITY_Param" -text {aresetn.POLARITY}
+  ipgui::add_param $IPINST -name "aresetn.POLARITY" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "aresetn.TYPE_Param" -text {aresetn.TYPE}
+  ipgui::add_param $IPINST -name "aresetn.TYPE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "ui_clk_sync_rst.TYPE_Param" -text {ui_clk_sync_rst.TYPE}
+  ipgui::add_param $IPINST -name "ui_clk_sync_rst.TYPE" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "ui_clk_sync_rst.POLARITY_Param" -text {ui_clk_sync_rst.POLARITY}
+  ipgui::add_param $IPINST -name "ui_clk_sync_rst.POLARITY" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "ui_clk.ASSOCIATED_RESET_Param" -text {ui_clk.ASSOCIATED_RESET}
+  ipgui::add_param $IPINST -name "ui_clk.ASSOCIATED_RESET" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "ui_clk.ASSOCIATED_MMCM_LOCK_Param" -text {ui_clk.ASSOCIATED_MMCM_LOCK}
+  ipgui::add_param $IPINST -name "ui_clk.ASSOCIATED_MMCM_LOCK" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "ui_clk.FREQ_HZ_Param" -text {ui_clk.FREQ_HZ}
+  ipgui::add_param $IPINST -name "ui_clk.FREQ_HZ" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "ui_clk.ASSOCIATED_BUSIF_Param" -text {ui_clk.ASSOCIATED_BUSIF}
+  ipgui::add_param $IPINST -name "ui_clk.ASSOCIATED_BUSIF" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "ui_clk.ASSOCIATED_ASYNC_RESET_Param" -text {ui_clk.ASSOCIATED_ASYNC_RESET}
+  ipgui::add_param $IPINST -name "ui_clk.ASSOCIATED_ASYNC_RESET" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "sys_clk_i.ASSOCIATED_RESET_Param" -text {sys_clk_i.ASSOCIATED_RESET}
+  ipgui::add_param $IPINST -name "sys_clk_i.ASSOCIATED_RESET" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "ui_addn_clk_0.ASSOCIATED_RESET_Param" -text {ui_addn_clk_0.ASSOCIATED_RESET}
+  ipgui::add_param $IPINST -name "ui_addn_clk_0.ASSOCIATED_RESET" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "ui_addn_clk_1.ASSOCIATED_RESET_Param" -text {ui_addn_clk_1.ASSOCIATED_RESET}
+  ipgui::add_param $IPINST -name "ui_addn_clk_1.ASSOCIATED_RESET" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "ui_addn_clk_2.ASSOCIATED_RESET_Param" -text {ui_addn_clk_2.ASSOCIATED_RESET}
+  ipgui::add_param $IPINST -name "ui_addn_clk_2.ASSOCIATED_RESET" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "ui_addn_clk_3.ASSOCIATED_RESET_Param" -text {ui_addn_clk_3.ASSOCIATED_RESET}
+  ipgui::add_param $IPINST -name "ui_addn_clk_3.ASSOCIATED_RESET" -show_label false -show_range false
+  ipgui::add_static_text $IPINST -name "ui_addn_clk_4.ASSOCIATED_RESET_Param" -text {ui_addn_clk_4.ASSOCIATED_RESET}
+  ipgui::add_param $IPINST -name "ui_addn_clk_4.ASSOCIATED_RESET" -show_label false -show_range false
 
-  #Adding Page
-  set Clocks [ipgui::add_page $IPINST -name "Clocks"]
-  ipgui::add_param $IPINST -name "MMCM_MULT_F" -parent ${Clocks}
-  ipgui::add_param $IPINST -name "MMCM_DIVCLK_DIVIDE" -parent ${Clocks}
-  ipgui::add_param $IPINST -name "REFCLK_FREQ" -parent ${Clocks}
-  ipgui::add_param $IPINST -name "DIFF_TERM_REFCLK" -parent ${Clocks} -widget comboBox
-  ipgui::add_param $IPINST -name "DIFF_TERM_SYSCLK" -parent ${Clocks} -widget comboBox
-  ipgui::add_param $IPINST -name "MMCM_CLKOUT2_DIVIDE" -parent ${Clocks}
-  ipgui::add_param $IPINST -name "MMCM_CLKOUT0_DIVIDE" -parent ${Clocks}
-  ipgui::add_param $IPINST -name "MMCM_CLKOUT4_DIVIDE" -parent ${Clocks}
-  ipgui::add_param $IPINST -name "MMCM_CLKOUT2_FREQ" -parent ${Clocks}
-  ipgui::add_param $IPINST -name "MMCM_CLKOUT0_EN" -parent ${Clocks} -widget comboBox
-  ipgui::add_param $IPINST -name "MMCM_CLKOUT4_FREQ" -parent ${Clocks}
-  ipgui::add_param $IPINST -name "MMCM_CLKOUT1_EN" -parent ${Clocks} -widget comboBox
-  ipgui::add_param $IPINST -name "REFCLK_TYPE" -parent ${Clocks}
-  ipgui::add_param $IPINST -name "MMCM_CLKOUT1_FREQ" -parent ${Clocks}
-  ipgui::add_param $IPINST -name "MMCM_CLKOUT2_EN" -parent ${Clocks} -widget comboBox
-  ipgui::add_param $IPINST -name "MMCM_CLKOUT4_EN" -parent ${Clocks} -widget comboBox
-  ipgui::add_param $IPINST -name "MMCM_CLKOUT3_EN" -parent ${Clocks} -widget comboBox
-  ipgui::add_param $IPINST -name "MMCM_CLKOUT0_FREQ" -parent ${Clocks}
-  ipgui::add_param $IPINST -name "MMCM_CLKOUT3_DIVIDE" -parent ${Clocks}
-  ipgui::add_param $IPINST -name "MMCM_CLKOUT3_FREQ" -parent ${Clocks}
-  ipgui::add_param $IPINST -name "MMCM_VCO" -parent ${Clocks}
-  ipgui::add_param $IPINST -name "MMCM_CLKOUT1_DIVIDE" -parent ${Clocks}
-  ipgui::add_param $IPINST -name "SYSCLK_TYPE" -parent ${Clocks}
-  ipgui::add_param $IPINST -name "UI_EXTRA_CLOCKS" -parent ${Clocks} -widget comboBox
-
-  #Adding Page
-  set AXI_Interface [ipgui::add_page $IPINST -name "AXI Interface"]
-  ipgui::add_param $IPINST -name "C_S_AXI_ADDR_WIDTH" -parent ${AXI_Interface}
-
-  ipgui::add_param $IPINST -name "C_S_AXI_MEM_SIZE"
-  ipgui::add_param $IPINST -name "TEMP_MON_CONTROL"
-  ipgui::add_param $IPINST -name "CLKOUT0_PHASE"
-
-}
-
-proc update_PARAM_VALUE.MMCM_CLKOUT0_FREQ { PARAM_VALUE.MMCM_CLKOUT0_FREQ PARAM_VALUE.MMCM_VCO PARAM_VALUE.MMCM_CLKOUT0_DIVIDE } {
-	# Procedure called to update MMCM_CLKOUT0_FREQ when any of the dependent parameters in the arguments change
-	
-	set MMCM_CLKOUT0_FREQ ${PARAM_VALUE.MMCM_CLKOUT0_FREQ}
-	set MMCM_VCO ${PARAM_VALUE.MMCM_VCO}
-	set MMCM_CLKOUT0_DIVIDE ${PARAM_VALUE.MMCM_CLKOUT0_DIVIDE}
-	set values(MMCM_VCO) [get_property value $MMCM_VCO]
-	set values(MMCM_CLKOUT0_DIVIDE) [get_property value $MMCM_CLKOUT0_DIVIDE]
-	set_property value [gen_USERPARAMETER_MMCM_CLKOUT0_FREQ_VALUE $values(MMCM_VCO) $values(MMCM_CLKOUT0_DIVIDE)] $MMCM_CLKOUT0_FREQ
-}
-
-proc validate_PARAM_VALUE.MMCM_CLKOUT0_FREQ { PARAM_VALUE.MMCM_CLKOUT0_FREQ } {
-	# Procedure called to validate MMCM_CLKOUT0_FREQ
-	return true
-}
-
-proc update_PARAM_VALUE.MMCM_CLKOUT1_FREQ { PARAM_VALUE.MMCM_CLKOUT1_FREQ PARAM_VALUE.MMCM_VCO PARAM_VALUE.MMCM_CLKOUT1_DIVIDE } {
-	# Procedure called to update MMCM_CLKOUT1_FREQ when any of the dependent parameters in the arguments change
-	
-	set MMCM_CLKOUT1_FREQ ${PARAM_VALUE.MMCM_CLKOUT1_FREQ}
-	set MMCM_VCO ${PARAM_VALUE.MMCM_VCO}
-	set MMCM_CLKOUT1_DIVIDE ${PARAM_VALUE.MMCM_CLKOUT1_DIVIDE}
-	set values(MMCM_VCO) [get_property value $MMCM_VCO]
-	set values(MMCM_CLKOUT1_DIVIDE) [get_property value $MMCM_CLKOUT1_DIVIDE]
-	set_property value [gen_USERPARAMETER_MMCM_CLKOUT1_FREQ_VALUE $values(MMCM_VCO) $values(MMCM_CLKOUT1_DIVIDE)] $MMCM_CLKOUT1_FREQ
-}
-
-proc validate_PARAM_VALUE.MMCM_CLKOUT1_FREQ { PARAM_VALUE.MMCM_CLKOUT1_FREQ } {
-	# Procedure called to validate MMCM_CLKOUT1_FREQ
-	return true
-}
-
-proc update_PARAM_VALUE.MMCM_CLKOUT3_FREQ { PARAM_VALUE.MMCM_CLKOUT3_FREQ PARAM_VALUE.MMCM_VCO PARAM_VALUE.MMCM_CLKOUT3_DIVIDE } {
-	# Procedure called to update MMCM_CLKOUT3_FREQ when any of the dependent parameters in the arguments change
-	
-	set MMCM_CLKOUT3_FREQ ${PARAM_VALUE.MMCM_CLKOUT3_FREQ}
-	set MMCM_VCO ${PARAM_VALUE.MMCM_VCO}
-	set MMCM_CLKOUT3_DIVIDE ${PARAM_VALUE.MMCM_CLKOUT3_DIVIDE}
-	set values(MMCM_VCO) [get_property value $MMCM_VCO]
-	set values(MMCM_CLKOUT3_DIVIDE) [get_property value $MMCM_CLKOUT3_DIVIDE]
-	if { [gen_USERPARAMETER_MMCM_CLKOUT3_FREQ_ENABLEMENT $values(MMCM_VCO) $values(MMCM_CLKOUT3_DIVIDE)] } {
-		set_property enabled true $MMCM_CLKOUT3_FREQ
-	} else {
-		set_property enabled false $MMCM_CLKOUT3_FREQ
-	}
-}
-
-proc validate_PARAM_VALUE.MMCM_CLKOUT3_FREQ { PARAM_VALUE.MMCM_CLKOUT3_FREQ } {
-	# Procedure called to validate MMCM_CLKOUT3_FREQ
-	return true
-}
-
-proc update_PARAM_VALUE.MMCM_CLKOUT4_FREQ { PARAM_VALUE.MMCM_CLKOUT4_FREQ PARAM_VALUE.MMCM_VCO PARAM_VALUE.MMCM_CLKOUT4_DIVIDE } {
-	# Procedure called to update MMCM_CLKOUT4_FREQ when any of the dependent parameters in the arguments change
-	
-	set MMCM_CLKOUT4_FREQ ${PARAM_VALUE.MMCM_CLKOUT4_FREQ}
-	set MMCM_VCO ${PARAM_VALUE.MMCM_VCO}
-	set MMCM_CLKOUT4_DIVIDE ${PARAM_VALUE.MMCM_CLKOUT4_DIVIDE}
-	set values(MMCM_VCO) [get_property value $MMCM_VCO]
-	set values(MMCM_CLKOUT4_DIVIDE) [get_property value $MMCM_CLKOUT4_DIVIDE]
-	set_property value [gen_USERPARAMETER_MMCM_CLKOUT4_FREQ_VALUE $values(MMCM_VCO) $values(MMCM_CLKOUT4_DIVIDE)] $MMCM_CLKOUT4_FREQ
-}
-
-proc validate_PARAM_VALUE.MMCM_CLKOUT4_FREQ { PARAM_VALUE.MMCM_CLKOUT4_FREQ } {
-	# Procedure called to validate MMCM_CLKOUT4_FREQ
-	return true
 }
 
 proc update_PARAM_VALUE.ADDR_CMD_MODE { PARAM_VALUE.ADDR_CMD_MODE } {
@@ -1124,6 +1411,15 @@ proc validate_PARAM_VALUE.MMCM_CLKOUT0_EN { PARAM_VALUE.MMCM_CLKOUT0_EN } {
 	return true
 }
 
+proc update_PARAM_VALUE.MMCM_CLKOUT0_FREQ { PARAM_VALUE.MMCM_CLKOUT0_FREQ } {
+	# Procedure called to update MMCM_CLKOUT0_FREQ when any of the dependent parameters in the arguments change
+}
+
+proc validate_PARAM_VALUE.MMCM_CLKOUT0_FREQ { PARAM_VALUE.MMCM_CLKOUT0_FREQ } {
+	# Procedure called to validate MMCM_CLKOUT0_FREQ
+	return true
+}
+
 proc update_PARAM_VALUE.MMCM_CLKOUT1_DIVIDE { PARAM_VALUE.MMCM_CLKOUT1_DIVIDE } {
 	# Procedure called to update MMCM_CLKOUT1_DIVIDE when any of the dependent parameters in the arguments change
 }
@@ -1139,6 +1435,15 @@ proc update_PARAM_VALUE.MMCM_CLKOUT1_EN { PARAM_VALUE.MMCM_CLKOUT1_EN } {
 
 proc validate_PARAM_VALUE.MMCM_CLKOUT1_EN { PARAM_VALUE.MMCM_CLKOUT1_EN } {
 	# Procedure called to validate MMCM_CLKOUT1_EN
+	return true
+}
+
+proc update_PARAM_VALUE.MMCM_CLKOUT1_FREQ { PARAM_VALUE.MMCM_CLKOUT1_FREQ } {
+	# Procedure called to update MMCM_CLKOUT1_FREQ when any of the dependent parameters in the arguments change
+}
+
+proc validate_PARAM_VALUE.MMCM_CLKOUT1_FREQ { PARAM_VALUE.MMCM_CLKOUT1_FREQ } {
+	# Procedure called to validate MMCM_CLKOUT1_FREQ
 	return true
 }
 
@@ -1187,6 +1492,15 @@ proc validate_PARAM_VALUE.MMCM_CLKOUT3_EN { PARAM_VALUE.MMCM_CLKOUT3_EN } {
 	return true
 }
 
+proc update_PARAM_VALUE.MMCM_CLKOUT3_FREQ { PARAM_VALUE.MMCM_CLKOUT3_FREQ } {
+	# Procedure called to update MMCM_CLKOUT3_FREQ when any of the dependent parameters in the arguments change
+}
+
+proc validate_PARAM_VALUE.MMCM_CLKOUT3_FREQ { PARAM_VALUE.MMCM_CLKOUT3_FREQ } {
+	# Procedure called to validate MMCM_CLKOUT3_FREQ
+	return true
+}
+
 proc update_PARAM_VALUE.MMCM_CLKOUT4_DIVIDE { PARAM_VALUE.MMCM_CLKOUT4_DIVIDE } {
 	# Procedure called to update MMCM_CLKOUT4_DIVIDE when any of the dependent parameters in the arguments change
 }
@@ -1202,6 +1516,15 @@ proc update_PARAM_VALUE.MMCM_CLKOUT4_EN { PARAM_VALUE.MMCM_CLKOUT4_EN } {
 
 proc validate_PARAM_VALUE.MMCM_CLKOUT4_EN { PARAM_VALUE.MMCM_CLKOUT4_EN } {
 	# Procedure called to validate MMCM_CLKOUT4_EN
+	return true
+}
+
+proc update_PARAM_VALUE.MMCM_CLKOUT4_FREQ { PARAM_VALUE.MMCM_CLKOUT4_FREQ } {
+	# Procedure called to update MMCM_CLKOUT4_FREQ when any of the dependent parameters in the arguments change
+}
+
+proc validate_PARAM_VALUE.MMCM_CLKOUT4_FREQ { PARAM_VALUE.MMCM_CLKOUT4_FREQ } {
+	# Procedure called to validate MMCM_CLKOUT4_FREQ
 	return true
 }
 
