@@ -415,7 +415,7 @@ module mig_7series_normal_ord_mig #
    //***************************************************************************
    parameter REFCLK_FREQ           = 200.0,
                                      // IODELAYCTRL reference clock frequency
-   parameter DIFF_TERM_REFCLK      = "TRUE",
+   parameter DIFF_TERM_REFCLK      = "FALSE",
                                      // Differential Termination for idelay
                                      // reference clock input pins
    //***************************************************************************
@@ -426,7 +426,7 @@ module mig_7series_normal_ord_mig #
                                      // # = Clock Period in pS.
    parameter nCK_PER_CLK           = 4,
                                      // # of memory CKs per fabric CLK
-   parameter DIFF_TERM_SYSCLK      = "TRUE",
+   parameter DIFF_TERM_SYSCLK      = "FALSE",
                                      // Differential Termination for System
                                      // clock input pins
       

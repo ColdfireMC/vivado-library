@@ -227,7 +227,8 @@ module mig_7series_normal_ord #(
 	 parameter nCK_PER_CLK           = 4,
 	 
 	parameter ORDERING              = "NORM",
-  parameter  DRAM_TYPE				= "DDR2"
+  parameter  DRAM_TYPE				= "DDR2",
+  parameter SIMULATION              = "FALSE"
 
 ) (
  

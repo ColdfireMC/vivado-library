@@ -6,6 +6,7 @@ proc init_gui { IPINST } {
   ipgui::add_param $IPINST -name "nBANK_MACHS" -parent ${Page_0} -widget comboBox
   ipgui::add_param $IPINST -name "ORDERING" -parent ${Page_0} -widget comboBox
   ipgui::add_param $IPINST -name "tCK" -parent ${Page_0}
+  ipgui::add_param $IPINST -name "SIMULATION" -parent ${Page_0} -widget comboBox
 
   #Adding Page
   set AXI_Interface [ipgui::add_page $IPINST -name "AXI Interface"]
@@ -414,6 +415,15 @@ proc validate_PARAM_VALUE.RST_ACT_LOW { PARAM_VALUE.RST_ACT_LOW } {
 	return true
 }
 
+proc update_PARAM_VALUE.SIMULATION { PARAM_VALUE.SIMULATION } {
+	# Procedure called to update SIMULATION when any of the dependent parameters in the arguments change
+}
+
+proc validate_PARAM_VALUE.SIMULATION { PARAM_VALUE.SIMULATION } {
+	# Procedure called to validate SIMULATION
+	return true
+}
+
 proc update_PARAM_VALUE.USE_CS_PORT { PARAM_VALUE.USE_CS_PORT } {
 	# Procedure called to update USE_CS_PORT when any of the dependent parameters in the arguments change
 }
@@ -726,5 +736,10 @@ proc update_MODELPARAM_VALUE.ORDERING { MODELPARAM_VALUE.ORDERING PARAM_VALUE.OR
 proc update_MODELPARAM_VALUE.DRAM_TYPE { MODELPARAM_VALUE.DRAM_TYPE PARAM_VALUE.DRAM_TYPE } {
 	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
 	set_property value [get_property value ${PARAM_VALUE.DRAM_TYPE}] ${MODELPARAM_VALUE.DRAM_TYPE}
+}
+
+proc update_MODELPARAM_VALUE.SIMULATION { MODELPARAM_VALUE.SIMULATION PARAM_VALUE.SIMULATION } {
+	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
+	set_property value [get_property value ${PARAM_VALUE.SIMULATION}] ${MODELPARAM_VALUE.SIMULATION}
 }
 

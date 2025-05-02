@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <spirit:component xmlns:xilinx="http://www.xilinx.com" xmlns:spirit="http://www.spiritconsortium.org/XMLSchema/SPIRIT/1685-2009" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <spirit:vendor>user.org</spirit:vendor>
-  <spirit:library>user</spirit:library>
-  <spirit:name>ddr_7series_digilent</spirit:name>
+  <spirit:library>useraaa</spirit:library>
+  <spirit:name>ddr2_7series_digilent_c</spirit:name>
   <spirit:version>1.0</spirit:version>
   <spirit:busInterfaces>
     <spirit:busInterface>
@@ -636,7 +636,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>2dfa4a10</spirit:value>
+            <spirit:value>dbe670b5</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -652,7 +652,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>acf75b66</spirit:value>
+            <spirit:value>13673357</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -666,21 +666,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>c4d39fb4</spirit:value>
-          </spirit:parameter>
-        </spirit:parameters>
-      </spirit:view>
-      <spirit:view>
-        <spirit:name>xilinx_implementation</spirit:name>
-        <spirit:displayName>Implementation</spirit:displayName>
-        <spirit:envIdentifier>:vivado.xilinx.com:implementation</spirit:envIdentifier>
-        <spirit:fileSetRef>
-          <spirit:localName>xilinx_implementation_view_fileset</spirit:localName>
-        </spirit:fileSetRef>
-        <spirit:parameters>
-          <spirit:parameter>
-            <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>4748e369</spirit:value>
+            <spirit:value>ea85c787</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -694,7 +680,49 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>37c04ccd</spirit:value>
+            <spirit:value>605c519d</spirit:value>
+          </spirit:parameter>
+        </spirit:parameters>
+      </spirit:view>
+      <spirit:view>
+        <spirit:name>xilinx_examplessynthesis</spirit:name>
+        <spirit:displayName>Examples Synthesis</spirit:displayName>
+        <spirit:envIdentifier>:vivado.xilinx.com:examples.synthesis</spirit:envIdentifier>
+        <spirit:fileSetRef>
+          <spirit:localName>xilinx_examplessynthesis_view_fileset</spirit:localName>
+        </spirit:fileSetRef>
+        <spirit:parameters>
+          <spirit:parameter>
+            <spirit:name>viewChecksum</spirit:name>
+            <spirit:value>ead8c72a</spirit:value>
+          </spirit:parameter>
+        </spirit:parameters>
+      </spirit:view>
+      <spirit:view>
+        <spirit:name>xilinx_examplessimulation</spirit:name>
+        <spirit:displayName>Examples Simulation</spirit:displayName>
+        <spirit:envIdentifier>:vivado.xilinx.com:examples.simulation</spirit:envIdentifier>
+        <spirit:fileSetRef>
+          <spirit:localName>xilinx_examplessimulation_view_fileset</spirit:localName>
+        </spirit:fileSetRef>
+        <spirit:parameters>
+          <spirit:parameter>
+            <spirit:name>viewChecksum</spirit:name>
+            <spirit:value>0f4c3d17</spirit:value>
+          </spirit:parameter>
+        </spirit:parameters>
+      </spirit:view>
+      <spirit:view>
+        <spirit:name>xilinx_examplesimplementation</spirit:name>
+        <spirit:displayName>Examples Implementation</spirit:displayName>
+        <spirit:envIdentifier>:vivado.xilinx.com:examples.implementation</spirit:envIdentifier>
+        <spirit:fileSetRef>
+          <spirit:localName>xilinx_examplesimplementation_view_fileset</spirit:localName>
+        </spirit:fileSetRef>
+        <spirit:parameters>
+          <spirit:parameter>
+            <spirit:name>viewChecksum</spirit:name>
+            <spirit:value>516f6813</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1935,6 +1963,11 @@
         <spirit:displayName>Dram Type</spirit:displayName>
         <spirit:value spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.DRAM_TYPE">DDR2</spirit:value>
       </spirit:modelParameter>
+      <spirit:modelParameter spirit:dataType="string">
+        <spirit:name>SIMULATION</spirit:name>
+        <spirit:displayName>Simulation</spirit:displayName>
+        <spirit:value spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.SIMULATION">FALSE</spirit:value>
+      </spirit:modelParameter>
     </spirit:modelParameters>
   </spirit:model>
   <spirit:choices>
@@ -1966,6 +1999,11 @@
       <spirit:enumeration>ACTIVE_LOW</spirit:enumeration>
     </spirit:choice>
     <spirit:choice>
+      <spirit:name>choice_list_d10f4555</spirit:name>
+      <spirit:enumeration>FALSE</spirit:enumeration>
+      <spirit:enumeration>TRUE</spirit:enumeration>
+    </spirit:choice>
+    <spirit:choice>
       <spirit:name>choice_list_e3928690</spirit:name>
       <spirit:enumeration>NORM</spirit:enumeration>
       <spirit:enumeration>RELAXED</spirit:enumeration>
@@ -1979,11 +2017,6 @@
         <spirit:name>src/mig_7series_normal_ord.xdc</spirit:name>
         <spirit:userFileType>xdc</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>src/mig_7series_normal_ord_ooc.xdc</spirit:name>
-        <spirit:userFileType>xdc</spirit:userFileType>
-        <spirit:userFileType>USED_IN_out_of_context</spirit:userFileType>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/mig_7series_v4_2_arb_mux.v</spirit:name>
@@ -2471,17 +2504,6 @@
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>src/mig_7series_normal_ord_mig.sv</spirit:name>
-        <spirit:fileType>systemVerilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_2542ca6e</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>src/mig_7series_normal_ord.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_5bf7c0e5</spirit:userFileType>
-        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
         <spirit:name>src/board.xit</spirit:name>
         <spirit:userFileType>xit</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
@@ -2491,6 +2513,17 @@
         <spirit:userFileType>xdc</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
         <spirit:userFileType>USED_IN_board</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>src/mig_7series_normal_ord_mig.sv</spirit:name>
+        <spirit:fileType>systemVerilogSource</spirit:fileType>
+        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>src/mig_7series_normal_ord.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+        <spirit:userFileType>CHECKSUM_7baeb006</spirit:userFileType>
+        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -2981,34 +3014,28 @@
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
       <spirit:file>
+        <spirit:name>src/board.xit</spirit:name>
+        <spirit:userFileType>xit</spirit:userFileType>
+        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
         <spirit:name>src/mig_7series_normal_ord_mig.sv</spirit:name>
         <spirit:fileType>systemVerilogSource</spirit:fileType>
+        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/mig_7series_normal_ord.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
-      <spirit:file>
-        <spirit:name>src/board.xit</spirit:name>
-        <spirit:userFileType>xit</spirit:userFileType>
-        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
-      </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
       <spirit:name>xilinx_xpgui_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>xgui/ddr_7series_digilent_v1_0.tcl</spirit:name>
+        <spirit:name>xgui/ddr2_7series_digilent_c_v1_0.tcl</spirit:name>
         <spirit:fileType>tclSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_c4d39fb4</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_ea85c787</spirit:userFileType>
         <spirit:userFileType>XGUI_VERSION_2</spirit:userFileType>
-      </spirit:file>
-    </spirit:fileSet>
-    <spirit:fileSet>
-      <spirit:name>xilinx_implementation_view_fileset</spirit:name>
-      <spirit:file>
-        <spirit:name>src/mig_7series_normal_ord_impl.xdc</spirit:name>
-        <spirit:userFileType>xdc</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -3018,12 +3045,66 @@
         <spirit:userFileType>xit</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
+    <spirit:fileSet>
+      <spirit:name>xilinx_examplessynthesis_view_fileset</spirit:name>
+      <spirit:file>
+        <spirit:name>src/example_top.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>src/traffic_gen/mig_7series_v4_2_data_gen_chk.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>src/traffic_gen/mig_7series_v4_2_tg.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>src/traffic_gen/mig_7series_v4_2_axi4_tg.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>src/traffic_gen/mig_7series_v4_2_axi4_wrapper.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>src/traffic_gen/mig_7series_v4_2_cmd_prbs_gen_axi.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+      </spirit:file>
+    </spirit:fileSet>
+    <spirit:fileSet>
+      <spirit:name>xilinx_examplessimulation_view_fileset</spirit:name>
+      <spirit:file>
+        <spirit:name>src/ddr2_model_parameters.vh</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+        <spirit:isIncludeFile>true</spirit:isIncludeFile>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>src/sim_tb_top.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>src/wiredly.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>src/ddr2_model.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+      </spirit:file>
+    </spirit:fileSet>
+    <spirit:fileSet>
+      <spirit:name>xilinx_examplesimplementation_view_fileset</spirit:name>
+      <spirit:file>
+        <spirit:name>src/example_top.xdc</spirit:name>
+        <spirit:userFileType>xdc</spirit:userFileType>
+      </spirit:file>
+    </spirit:fileSet>
   </spirit:fileSets>
   <spirit:description>Based on MIG 7 Series, this is a native IP is a memory controller for the Digilent Boards based on Xilinx 7 Series FPPGAS</spirit:description>
   <spirit:parameters>
     <spirit:parameter>
       <spirit:name>Component_Name</spirit:name>
-      <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.Component_Name" spirit:order="1">mig_7series_custom_v1_0</spirit:value>
+      <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.Component_Name" spirit:order="1">ddr2_7series_digilent_c_v1_0</spirit:value>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>tCK</spirit:name>
@@ -3301,6 +3382,11 @@
       <spirit:displayName>Ddrx Board Interface</spirit:displayName>
       <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.DDR_MEM_INTERFACE_BOARD_INTERFACE">Custom</spirit:value>
     </spirit:parameter>
+    <spirit:parameter>
+      <spirit:name>SIMULATION</spirit:name>
+      <spirit:displayName>Simulation</spirit:displayName>
+      <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.SIMULATION" spirit:choiceRef="choice_list_d10f4555">FALSE</spirit:value>
+    </spirit:parameter>
   </spirit:parameters>
   <spirit:vendorExtensions>
     <xilinx:coreExtensions>
@@ -3319,23 +3405,30 @@
       <xilinx:taxonomies>
         <xilinx:taxonomy>/Memories_&amp;_Storage_Elements/Memory_Interface_Generators</xilinx:taxonomy>
       </xilinx:taxonomies>
-      <xilinx:displayName>DDR SDRAM Memory Controller for Digilent Boards</xilinx:displayName>
+      <xilinx:displayName>DDR2 SDRAM Memory Controller for Digilent Boards</xilinx:displayName>
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
-      <xilinx:coreRevision>1</xilinx:coreRevision>
+      <xilinx:coreRevision>3</xilinx:coreRevision>
       <xilinx:upgrades>
         <xilinx:canUpgradeFrom>user.org:user:mig_7series_normal_ord:1.0</xilinx:canUpgradeFrom>
         <xilinx:canUpgradeFrom>user.org:user:mig_7series_custom:1.0</xilinx:canUpgradeFrom>
+        <xilinx:canUpgradeFrom>user.org:user:ddr_7series_digilent:1.0</xilinx:canUpgradeFrom>
+        <xilinx:canUpgradeFrom>user.org:user:ddr2_7series_digilent:1.0</xilinx:canUpgradeFrom>
       </xilinx:upgrades>
-      <xilinx:coreCreationDateTime>2025-01-08T16:07:55Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2025-04-19T05:22:50Z</xilinx:coreCreationDateTime>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2024.2_AR37126</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="d84506c7"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="fcf601b3"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="da671cbf"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="a04a5d3c"/>
       <xilinx:checksum xilinx:scope="ports" xilinx:value="625dccba"/>
-      <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="a60b13dd"/>
-      <xilinx:checksum xilinx:scope="parameters" xilinx:value="64ae6037"/>
+      <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="916f4aec"/>
+      <xilinx:checksum xilinx:scope="parameters" xilinx:value="cb616a34"/>
+      <xilinx:targetDRCs>
+        <xilinx:targetDRC xilinx:tool="ipi">
+          <xilinx:targetDRCOption xilinx:name="ignore_freq_hz" xilinx:value="false"/>
+        </xilinx:targetDRC>
+      </xilinx:targetDRCs>
     </xilinx:packagingInfo>
   </spirit:vendorExtensions>
 </spirit:component>

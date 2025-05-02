@@ -69,6 +69,7 @@ ENTITY RGB2VGA IS
     RGB_pVSync : IN STD_LOGIC;
 
     PixelClk       : IN  STD_LOGIC;     --pixel clock
+    resetn         : IN  std_logic;
     --VGA_OUT_clk : OUT std_logic;
     -- VGA_OUT_de  : OUT std_logic;
     VGA_OUT_RED   : OUT STD_LOGIC_VECTOR(KREDDEPTH-1 DOWNTO 0);
@@ -84,18 +85,21 @@ ARCHITECTURE Behavioral OF RGB2VGA IS
 
 BEGIN
 
-  Blanking : PROCESS(PixelClk)
+  Blanking : PROCESS(PixelClk, resetn)
   BEGIN
+    if (resetn = '1') then
     IF Rising_Edge(PixelClk) THEN
-      IF (RGB_pVDE = '1') THEN
-        int_pData <= RGB_pData;
-      ELSE
-        int_pData <= (OTHERS => '0');
-      END IF;
-
-      VGA_OUT_HSYNC <= RGB_pHSync;
-      VGA_OUT_VSYNC <= RGB_pVSync;
+        IF (RGB_pVDE = '1') THEN
+            int_pData <= RGB_pData;
+        ELSE
+            int_pData <= (OTHERS => '0');
     END IF;
+        VGA_OUT_HSYNC <= RGB_pHSync;
+        VGA_OUT_VSYNC <= RGB_pVSync;
+    END IF;
+    else
+        int_pData <= (OTHERS => '0');
+        end if;
   END PROCESS Blanking;
 
   VGA_OUT_RED   <= int_pData(VID_IN_DATA_WIDTH-1 DOWNTO VID_IN_DATA_WIDTH - KREDDEPTH);
