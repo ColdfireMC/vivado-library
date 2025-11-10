@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <spirit:component xmlns:xilinx="http://www.xilinx.com" xmlns:spirit="http://www.spiritconsortium.org/XMLSchema/SPIRIT/1685-2009" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <spirit:vendor>user.org</spirit:vendor>
-  <spirit:library>user</spirit:library>
+  <spirit:library>useraaa</spirit:library>
   <spirit:name>ddr2_7series_digilent_c</spirit:name>
   <spirit:version>1.0</spirit:version>
   <spirit:busInterfaces>
@@ -636,7 +636,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>ff3c8ee7</spirit:value>
+            <spirit:value>dbe670b5</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -652,7 +652,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>ec9faf37</spirit:value>
+            <spirit:value>13673357</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -680,7 +680,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>ac7aa55a</spirit:value>
+            <spirit:value>605c519d</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -2504,6 +2504,11 @@
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
       <spirit:file>
+        <spirit:name>src/board.xit</spirit:name>
+        <spirit:userFileType>xit</spirit:userFileType>
+        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
         <spirit:name>src/mig_7series_normal_ord_board.xdc</spirit:name>
         <spirit:userFileType>xdc</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
@@ -2519,10 +2524,6 @@
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>CHECKSUM_7baeb006</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>src/board.xit</spirit:name>
-        <spirit:userFileType>xit</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -3013,6 +3014,11 @@
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
       <spirit:file>
+        <spirit:name>src/board.xit</spirit:name>
+        <spirit:userFileType>xit</spirit:userFileType>
+        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
         <spirit:name>src/mig_7series_normal_ord_mig.sv</spirit:name>
         <spirit:fileType>systemVerilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
@@ -3401,24 +3407,23 @@
       </xilinx:taxonomies>
       <xilinx:displayName>DDR2 SDRAM Memory Controller for Digilent Boards</xilinx:displayName>
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
-      <xilinx:coreRevision>11</xilinx:coreRevision>
+      <xilinx:coreRevision>3</xilinx:coreRevision>
       <xilinx:upgrades>
         <xilinx:canUpgradeFrom>user.org:user:mig_7series_normal_ord:1.0</xilinx:canUpgradeFrom>
         <xilinx:canUpgradeFrom>user.org:user:mig_7series_custom:1.0</xilinx:canUpgradeFrom>
         <xilinx:canUpgradeFrom>user.org:user:ddr_7series_digilent:1.0</xilinx:canUpgradeFrom>
         <xilinx:canUpgradeFrom>user.org:user:ddr2_7series_digilent:1.0</xilinx:canUpgradeFrom>
-        <xilinx:canUpgradeFrom>user.org:useraaa:ddr2_7series_digilent_c:1.0</xilinx:canUpgradeFrom>
       </xilinx:upgrades>
-      <xilinx:coreCreationDateTime>2025-11-10T15:23:54Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2025-04-19T05:22:50Z</xilinx:coreCreationDateTime>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
-      <xilinx:xilinxVersion>2025.1</xilinx:xilinxVersion>
+      <xilinx:xilinxVersion>2024.2_AR37126</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="d84506c7"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="fcf601b3"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="a2d9ccfb"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="a04a5d3c"/>
       <xilinx:checksum xilinx:scope="ports" xilinx:value="625dccba"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="916f4aec"/>
-      <xilinx:checksum xilinx:scope="parameters" xilinx:value="b66fa059"/>
+      <xilinx:checksum xilinx:scope="parameters" xilinx:value="cb616a34"/>
       <xilinx:targetDRCs>
         <xilinx:targetDRC xilinx:tool="ipi">
           <xilinx:targetDRCOption xilinx:name="ignore_freq_hz" xilinx:value="false"/>

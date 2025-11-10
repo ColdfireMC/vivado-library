@@ -50,13 +50,13 @@
 // /___/  \  /    Vendor             : AMD
 // \   \   \/     Version            : 4.2
 //  \   \         Application        : MIG
-//  /   /         Filename           : design_1_mig_7series_0_0_mig.v
+//  /   /         Filename           : mig_7series_normal_ord_mig.v
 // /___/   /\     Date Last Modified : $Date: 2011/06/02 08:35:03 $
-// \   \  /  \    Date Created       : Tue Sept 21 2010
+// \   \  /  \    Date Created       : Fri Oct 14 2011
 //  \___\/\___\
 //
 // Device           : 7 Series
-// Design Name      : DDR3 SDRAM
+// Design Name      : DDR2 SDRAM
 // Purpose          :
 //   Top-level  module. This module can be instantiated in the
 //   system and interconnect as shown in user design wrapper file (user top module).
@@ -68,12 +68,14 @@
 // Revision History :
 //*****************************************************************************
 
-//`define SKIP_CALIB
 `timescale 1ps/1ps
 
-module mig_7series_mig #
+module mig_7series_normal_ord_mig #
   (
 
+      parameter RST_ACT_LOW           = 1,
+                                     // =1 for active low reset,
+                                     // =0 for active high.
    //***************************************************************************
    // The following parameters refer to width of various ports
    //***************************************************************************
@@ -121,14 +123,14 @@ module mig_7series_mig #
                                      // # of Ranks.
    parameter ODT_WIDTH             = 1,
                                      // # of ODT outputs to memory.
-   parameter ROW_WIDTH             = 15,
+   parameter ROW_WIDTH             = 13,
                                      // # of memory Row Address bits.
-   parameter ADDR_WIDTH            = 29,
+   parameter ADDR_WIDTH            = 27,
                                      // # = RANK_WIDTH + BANK_WIDTH
                                      //     + ROW_WIDTH + COL_WIDTH;
                                      // Chip Select is always tied to low for
                                      // single rank devices
-   parameter USE_CS_PORT          = 0,
+   parameter USE_CS_PORT          = 1,
                                      // # = 1, When Chip Select (CS#) output is enabled
                                      //   = 0, When Chip Select (CS#) output is disabled
                                      // If CS_N disabled, user must connect
@@ -143,21 +145,13 @@ module mig_7series_mig #
    parameter USE_ODT_PORT          = 1,
                                      // # = 1, When ODT output is enabled
                                      //   = 0, When ODT output is disabled
-                                     // Parameter configuration for Dynamic ODT support:
-                                     // USE_ODT_PORT = 0, RTT_NOM = "DISABLED", RTT_WR = "60/120".
-                                     // This configuration allows to save ODT pin mapping from FPGA.
-                                     // The user can tie the ODT input of DRAM to HIGH.
-   parameter IS_CLK_SHARED          = "FALSE",
-                                      // # = "true" when clock is shared
-                                      //   = "false" when clock is not shared
-
    parameter PHY_CONTROL_MASTER_BANK = 0,
                                      // The bank index where master PHY_CONTROL resides,
                                      // equal to the PLL residing bank
-   parameter MEM_DENSITY           = "4Gb",
+   parameter MEM_DENSITY           = "1Gb",
                                      // Indicates the density of the Memory part
                                      // Added for the sake of Vivado simulations
-   parameter MEM_SPEEDGRADE        = "125",
+   parameter MEM_SPEEDGRADE        = "25E",
                                      // Indicates the Speed grade of Memory Part
                                      // Added for the sake of Vivado simulations
    parameter MEM_DEVICE_WIDTH      = 16,
@@ -188,40 +182,24 @@ module mig_7series_mig #
                                      // DDR2 SDRAM: Burst Type (Mode Register).
                                      // # = "SEQ" - (Sequential),
                                      //   = "INT" - (Interleaved).
-   parameter CL                    = 6,
+   parameter CL                    = 5,
                                      // in number of clock cycles
                                      // DDR3 SDRAM: CAS Latency (Mode Register 0).
                                      // DDR2 SDRAM: CAS Latency (Mode Register).
-   parameter CWL                   = 5,
-                                     // in number of clock cycles
-                                     // DDR3 SDRAM: CAS Write Latency (Mode Register 2).
-                                     // DDR2 SDRAM: Can be ignored
    parameter OUTPUT_DRV            = "HIGH",
-                                     // Output Driver Impedance Control (Mode Register 1).
-                                     // # = "HIGH" - RZQ/7,
-                                     //   = "LOW" - RZQ/6.
-   parameter RTT_NOM               = "40",
-                                     // RTT_NOM (ODT) (Mode Register 1).
-                                     //   = "120" - RZQ/2,
-                                     //   = "60"  - RZQ/4,
-                                     //   = "40"  - RZQ/6.
-   parameter RTT_WR                = "OFF",
-                                     // RTT_WR (ODT) (Mode Register 2).
-                                     // # = "OFF" - Dynamic ODT off,
-                                     //   = "120" - RZQ/2,
-                                     //   = "60"  - RZQ/4,
+                                     // Output Drive Strength (Extended Mode Register).
+                                     // # = "HIGH" - FULL,
+                                     //   = "LOW" - REDUCED.
+   parameter RTT_NOM               = "50",
+                                     // RTT (Nominal) (Extended Mode Register).
+                                     //   = "150" - 150 Ohms,
+                                     //   = "75" - 75 Ohms,
+                                     //   = "50" - 50 Ohms.
    parameter ADDR_CMD_MODE         = "1T" ,
                                      // # = "1T", "2T".
    parameter REG_CTRL              = "OFF",
                                      // # = "ON" - RDIMMs,
                                      //   = "OFF" - Components, SODIMMs, UDIMMs.
-   parameter CA_MIRROR             = "OFF",
-                                     // C/A mirror opt for DDR3 dual rank
-
-   parameter VDD_OP_VOLT           = "150",
-                                     // # = "150" - 1.5V Vdd Memory part
-                                     //   = "135" - 1.35V Vdd Memory part
-
    
    //***************************************************************************
    // The following parameters are multiplier and divisor factors for PLLE2.
@@ -229,74 +207,48 @@ module mig_7series_mig #
    //***************************************************************************
    parameter CLKIN_PERIOD          = 10000,
                                      // Input Clock Period
-   parameter CLKFBOUT_MULT         = 8,
+   parameter CLKFBOUT_MULT         = 13,
                                      // write PLL VCO multiplier
    parameter DIVCLK_DIVIDE         = 1,
                                      // write PLL VCO divisor
    parameter CLKOUT0_PHASE         = 0.0,
                                      // Phase for PLL output clock (CLKOUT0)
-   parameter CLKOUT0_DIVIDE        = 1,
+   parameter CLKOUT0_DIVIDE        = 2,
                                      // VCO output divisor for PLL output clock (CLKOUT0)
-   parameter CLKOUT1_DIVIDE        = 2,
+   parameter CLKOUT1_DIVIDE        = 4,
                                      // VCO output divisor for PLL output clock (CLKOUT1)
-   parameter CLKOUT2_DIVIDE        = 32,
+   parameter CLKOUT2_DIVIDE        = 64,
                                      // VCO output divisor for PLL output clock (CLKOUT2)
-   parameter CLKOUT3_DIVIDE        = 8,
+   parameter CLKOUT3_DIVIDE        = 16,
                                      // VCO output divisor for PLL output clock (CLKOUT3)
-   parameter MMCM_VCO              = 800,
+   parameter MMCM_VCO              = 1200,
                                      // Max Freq (MHz) of MMCM VCO
-   parameter MMCM_MULT_F           = 8,
+   parameter MMCM_MULT_F           = 14,
                                      // write MMCM VCO multiplier
    parameter MMCM_DIVCLK_DIVIDE    = 1,
                                      // write MMCM VCO divisor
-   parameter MMCM_CLKOUT0_EN       = "FALSE",
-                                     // "TRUE" - MMCM output clock (CLKOUT0) is enabled
-                                     // "FALSE" - MMCM output clock (CLKOUT0) is disabled
-   parameter MMCM_CLKOUT1_EN       = "FALSE",
-                                     // "TRUE" - MMCM output clock (CLKOUT1) is enabled
-                                     // "FALSE" - MMCM output clock (CLKOUT1) is disabled
-   parameter MMCM_CLKOUT2_EN       = "FALSE",
-                                     // "TRUE" - MMCM output clock (CLKOUT2) is enabled
-                                     // "FALSE" - MMCM output clock (CLKOUT2) is disabled
-   parameter MMCM_CLKOUT3_EN       = "FALSE",
-                                     // "TRUE" - MMCM output clock (CLKOUT3) is enabled
-                                     // "FALSE" - MMCM output clock (CLKOUT3) is disabled
-   parameter MMCM_CLKOUT4_EN       = "FALSE",
-                                     // "TRUE" - MMCM output clock (CLKOUT4) is enabled
-                                     // "FALSE" - MMCM output clock (CLKOUT4) is disabled
-   parameter MMCM_CLKOUT0_DIVIDE   = 4,
-                                     // VCO output divisor for MMCM output clock (CLKOUT0)
-   parameter MMCM_CLKOUT1_DIVIDE   = 1,
-                                     // VCO output divisor for MMCM output clock (CLKOUT1)
-   parameter MMCM_CLKOUT2_DIVIDE   = 1,
-                                     // VCO output divisor for MMCM output clock (CLKOUT2)
-   parameter MMCM_CLKOUT3_DIVIDE   = 1,
-                                     // VCO output divisor for MMCM output clock (CLKOUT3)
-   parameter MMCM_CLKOUT4_DIVIDE   = 1,
-                                     // VCO output divisor for MMCM output clock (CLKOUT4)
-
 
    //***************************************************************************
    // Memory Timing Parameters. These parameters varies based on the selected
    // memory part.
    //***************************************************************************
-   parameter tCKE                  = 5000,
+   parameter tCKE                  = 7500,
                                      // memory tCKE paramter in pS
-   parameter tFAW                  = 40000,
+   parameter tFAW                  = 45000,
                                      // memory tRAW paramter in pS.
    parameter tPRDI                 = 1_000_000,
                                      // memory tPRDI paramter in pS.
-   parameter tRAS                  = 35000,
+   parameter tRAS                  = 40000,
                                      // memory tRAS paramter in pS.
-   parameter tRCD                  = 13750,
+   parameter tRCD                  = 15000,
                                      // memory tRCD paramter in pS.
    parameter tREFI                 = 7800000,
                                      // memory tREFI paramter in pS.
-   parameter tRFC                  = 260000,
+   parameter tRFC                  = 127500,
                                      // memory tRFC paramter in pS.
-   parameter tRP                   = 13750,
+   parameter tRP                   = 12500,
                                      // memory tRP paramter in pS.
-   parameter tRRD                  = 7500,
+   parameter tRRD                  = 10000,
                                      // memory tRRD paramter in pS.
    parameter tRTP                  = 7500,
                                      // memory tRTP paramter in pS.
@@ -304,7 +256,7 @@ module mig_7series_mig #
                                      // memory tWTR paramter in pS.
    parameter tZQI                  = 128_000_000,
                                      // memory tZQI paramter in nS.
-   parameter tZQCS                 = 64,//64,
+   parameter tZQCS                 = 64,
                                      // memory tZQCS paramter in clock cycles.
 
    //***************************************************************************
@@ -316,8 +268,8 @@ module mig_7series_mig #
                                      // # = "SKIP" - Not supported
                                      // # = "FAST" - Complete memory init & use
                                      //              abbreviated calib sequence
-  parameter SIMULATION            = "FALSE",
 
+   parameter SIMULATION            = "FALSE",
                                      // Should be TRUE during design simulations and
                                      // FALSE during implementations
 
@@ -336,7 +288,7 @@ module mig_7series_mig #
                                      // Byte lanes used in an IO column.
    parameter BYTE_LANES_B4         = 4'b0000,
                                      // Byte lanes used in an IO column.
-   parameter DATA_CTL_B0           = 4'b1100,
+   parameter DATA_CTL_B0           = 4'b0101,
                                      // Indicates Byte lane is data byte lane
                                      // or control Byte lane. '1' in a bit
                                      // position indicates a data byte lane and
@@ -361,28 +313,28 @@ module mig_7series_mig #
                                      // or control Byte lane. '1' in a bit
                                      // position indicates a data byte lane and
                                      // a '0' indicates a control byte lane
-   parameter PHY_0_BITLANES        = 48'h3F7_3FE_FFF_BFF,
+   parameter PHY_0_BITLANES        = 48'hFFC_3F7_FFF_3FE,
    parameter PHY_1_BITLANES        = 48'h000_000_000_000,
    parameter PHY_2_BITLANES        = 48'h000_000_000_000,
 
    // control/address/data pin mapping parameters
    parameter CK_BYTE_MAP
-     = 144'h00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00,
+     = 144'h00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_03,
    parameter ADDR_MAP
-     = 192'h000_001_005_009_000_011_007_003_004_008_006_00B_01B_015_002_014,
-   parameter BANK_MAP   = 36'h010_013_017,
-   parameter CAS_MAP    = 12'h016,
+     = 192'h000_000_000_010_033_01A_019_032_03A_034_018_036_012_011_017_015,
+   parameter BANK_MAP   = 36'h013_016_01B,
+   parameter CAS_MAP    = 12'h039,
    parameter CKE_ODT_BYTE_MAP = 8'h00,
-   parameter CKE_MAP    = 96'h000_000_000_000_000_000_000_012,
-   parameter ODT_MAP    = 96'h000_000_000_000_000_000_000_019,
-   parameter CS_MAP     = 120'h000_000_000_000_000_000_000_000_000_000,
+   parameter CKE_MAP    = 96'h000_000_000_000_000_000_000_038,
+   parameter ODT_MAP    = 96'h000_000_000_000_000_000_000_035,
+   parameter CS_MAP     = 120'h000_000_000_000_000_000_000_000_000_037,
    parameter PARITY_MAP = 12'h000,
-   parameter RAS_MAP    = 12'h018,
-   parameter WE_MAP     = 12'h01A,
+   parameter RAS_MAP    = 12'h014,
+   parameter WE_MAP     = 12'h03B,
    parameter DQS_BYTE_MAP
-     = 144'h00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_03_02,
-   parameter DATA0_MAP  = 96'h025_027_023_029_028_024_021_026,
-   parameter DATA1_MAP  = 96'h039_035_038_037_034_031_036_030,
+     = 144'h00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_02_00,
+   parameter DATA0_MAP  = 96'h008_004_009_007_005_001_006_003,
+   parameter DATA1_MAP  = 96'h022_028_020_024_027_025_026_021,
    parameter DATA2_MAP  = 96'h000_000_000_000_000_000_000_000,
    parameter DATA3_MAP  = 96'h000_000_000_000_000_000_000_000,
    parameter DATA4_MAP  = 96'h000_000_000_000_000_000_000_000,
@@ -399,7 +351,7 @@ module mig_7series_mig #
    parameter DATA15_MAP = 96'h000_000_000_000_000_000_000_000,
    parameter DATA16_MAP = 96'h000_000_000_000_000_000_000_000,
    parameter DATA17_MAP = 96'h000_000_000_000_000_000_000_000,
-   parameter MASK0_MAP  = 108'h000_000_000_000_000_000_000_032_022,
+   parameter MASK0_MAP  = 108'h000_000_000_000_000_000_000_029_002,
    parameter MASK1_MAP  = 108'h000_000_000_000_000_000_000_000_000,
 
    parameter SLOT_0_CONFIG         = 8'b0000_0001,
@@ -412,15 +364,15 @@ module mig_7series_mig #
    //***************************************************************************
    parameter IBUF_LPWR_MODE        = "OFF",
                                      // to phy_top
-   parameter DATA_IO_IDLE_PWRDWN   = "OFF",
+   parameter DATA_IO_IDLE_PWRDWN   = "ON",
                                      // # = "ON", "OFF"
    parameter BANK_TYPE             = "HR_IO",
                                      // # = "HP_IO", "HPL_IO", "HR_IO", "HRL_IO"
-   parameter DATA_IO_PRIM_TYPE     = "DEFAULT",
+   parameter DATA_IO_PRIM_TYPE     = "HR_LP",
                                      // # = "HP_LP", "HR_LP", "DEFAULT"
    parameter CKE_ODT_AUX           = "FALSE",
    parameter USER_REFRESH          = "OFF",
-   parameter WRLVL                 = "ON",
+   parameter WRLVL                 = "OFF",
                                      // # = "ON" - DDR3 SDRAM
                                      //   = "OFF" - DDR2 SDRAM.
    parameter ORDERING              = "NORM",
@@ -435,18 +387,10 @@ module mig_7series_mig #
                                      // Calibration bank address will be used for
                                      // calibration read and write operations
    parameter TCQ                   = 100,
-   parameter IDELAY_ADJ            = "OFF",
-   parameter FINE_PER_BIT          = "OFF",
-   parameter CENTER_COMP_MODE      = "OFF",
-   parameter PI_VAL_ADJ            = "OFF",
-   parameter IODELAY_GRP0          = "DESIGN_1_MIG_7SERIES_0_0_IODELAY_MIG0",
+   parameter IODELAY_GRP0          = "MIG_7SERIES_NORMAL_ORD_IODELAY_MIG0",
                                      // It is associated to a set of IODELAYs with
                                      // an IDELAYCTRL that have same IODELAY CONTROLLER
                                      // clock frequency (200MHz).
-   parameter IODELAY_GRP1          = "DESIGN_1_MIG_7SERIES_0_0_IODELAY_MIG1",
-                                     // It is associated to a set of IODELAYs with
-                                     // an IDELAYCTRL that have same IODELAY CONTROLLER
-                                     // clock frequency (300MHz/400MHz).
    parameter SYSCLK_TYPE           = "NO_BUFFER",
                                      // System clock type DIFFERENTIAL, SINGLE_ENDED,
                                      // NO_BUFFER
@@ -457,16 +401,13 @@ module mig_7series_mig #
                                      // "TRUE" - if pin is selected for sys_rst
                                      //          and IBUF will be instantiated.
                                      // "FALSE" - if pin is not selected for sys_rst
-   parameter FPGA_SPEED_GRADE      = 1,
-                                     // FPGA speed grade
       
    parameter CMD_PIPE_PLUS1        = "ON",
                                      // add pipeline stage between MC and PHY
-   parameter DRAM_TYPE             = "DDR3",
+   parameter DRAM_TYPE             = "DDR2",
    parameter CAL_WIDTH             = "HALF",
    parameter STARVE_LIMIT          = 2,
                                      // # = 2,3,4.
-   parameter REF_CLK_MMCM_IODELAY_CTRL    = "FALSE",
       
 
    //***************************************************************************
@@ -480,12 +421,11 @@ module mig_7series_mig #
    //***************************************************************************
    // System clock frequency parameters
    //***************************************************************************
-   parameter tCK                   = 2500,
+   parameter tCK                   = 3077,
                                      // memory tCK paramter.
                                      // # = Clock Period in pS.
    parameter nCK_PER_CLK           = 4,
-   // # of memory CKs per fabric CLK
-   
+                                     // # of memory CKs per fabric CLK
    parameter DIFF_TERM_SYSCLK      = "FALSE",
                                      // Differential Termination for System
                                      // clock input pins
@@ -501,12 +441,12 @@ module mig_7series_mig #
                                      // 1/2, 1/4 and 1/8 of fabrick clock.
                                      // Valid for DDR2/DDR3 AXI interfaces
                                      // based on GUI selection
-   parameter C_S_AXI_ID_WIDTH              = 2,
+   parameter C_S_AXI_ID_WIDTH              = 4,
                                              // Width of all master and slave ID signals.
                                              // # = >= 1.
-   parameter C_S_AXI_MEM_SIZE              = "536870912",
+   parameter C_S_AXI_MEM_SIZE              = "134217728",
                                      // Address Space required for this component
-   parameter C_S_AXI_ADDR_WIDTH            = 29,
+   parameter C_S_AXI_ADDR_WIDTH            = 27,
                                              // Width of S_AXI_AWADDR, S_AXI_ARADDR, M_AXI_AWADDR and
                                              // M_AXI_ARADDR for all SI/MI slots.
                                              // # = 32.
@@ -517,7 +457,7 @@ module mig_7series_mig #
    parameter C_MC_nCK_PER_CLK              = 4,
                                              // Indicates whether to instatiate upsizer
                                              // Range: 0, 1
-   parameter C_S_AXI_SUPPORTS_NARROW_BURST = 1,
+   parameter C_S_AXI_SUPPORTS_NARROW_BURST = 0,
                                              // Indicates whether to instatiate upsizer
                                              // Range: 0, 1
    parameter C_RD_WR_ARB_ALGORITHM          = "RD_PRI_REG",
@@ -580,48 +520,41 @@ module mig_7series_mig #
    //***************************************************************************
    // Temparature monitor parameter
    //***************************************************************************
-   parameter TEMP_MON_CONTROL      = "INTERNAL",
+   parameter TEMP_MON_CONTROL      = "INTERNAL"
                                      // # = "INTERNAL", "EXTERNAL"
-   //***************************************************************************
-   // FPGA Voltage Type parameter
-   //***************************************************************************
-   parameter FPGA_VOLT_TYPE        = "N",
-                                     // # = "L", "N". When FPGA VccINT is 0.9v,
-                                     // the value is "L", else it is "N"
       
-   parameter RST_ACT_LOW           = 1
+//   parameter RST_ACT_LOW           = 1
                                      // =1 for active low reset,
                                      // =0 for active high.
    )
   (
 
    // Inouts
-   inout [DQ_WIDTH-1:0]                         ddr3_dq,
-   inout [DQS_WIDTH-1:0]                        ddr3_dqs_n,
-   inout [DQS_WIDTH-1:0]                        ddr3_dqs_p,
+   inout [DQ_WIDTH-1:0]                         ddr_mem_interface_dq,
+   inout [DQS_WIDTH-1:0]                        ddr_mem_interface_dqs_n,
+   inout [DQS_WIDTH-1:0]                        ddr_mem_interface_dqs_p,
 
    // Outputs
-   output [ROW_WIDTH-1:0]                       ddr3_addr,
-   output [BANK_WIDTH-1:0]                      ddr3_ba,
-   output                                       ddr3_ras_n,
-   output                                       ddr3_cas_n,
-   output                                       ddr3_we_n,
-   output                                       ddr3_reset_n,
-   output [CK_WIDTH-1:0]                        ddr3_ck_p,
-   output [CK_WIDTH-1:0]                        ddr3_ck_n,
-   output [CKE_WIDTH-1:0]                       ddr3_cke,
+   output [ROW_WIDTH-1:0]                       ddr_mem_interface_addr,
+   output [BANK_WIDTH-1:0]                      ddr_mem_interface_ba,
+   output                                       ddr_mem_interface_ras_n,
+   output                                       ddr_mem_interface_cas_n,
+   output                                       ddr_mem_interface_we_n,
    
+   output [CK_WIDTH-1:0]                        ddr_mem_interface_ck_p,
+   output [CK_WIDTH-1:0]                        ddr_mem_interface_ck_n,
+   output [CKE_WIDTH-1:0]                       ddr_mem_interface_cke,
    
-   output [DM_WIDTH-1:0]                        ddr3_dm,
+   output [(CS_WIDTH*nCS_PER_RANK)-1:0]           ddr_mem_interface_cs_n,
    
-   output [ODT_WIDTH-1:0]                       ddr3_odt,
+   output [DM_WIDTH-1:0]                        ddr_mem_interface_dm,
+   
+   output [ODT_WIDTH-1:0]                       ddr_mem_interface_odt,
    
 
    // Inputs
-   
    // Single-ended system clock
    input                                        sys_clk_i,
-   
    // Single-ended iodelayctrl clk (reference clock)
    input                                        clk_ref_i,
    
@@ -629,14 +562,12 @@ module mig_7series_mig #
    output                                       ui_clk,
    output                                       ui_clk_sync_rst,
    
-   output                                       ui_addn_clk_0,
-   output                                       ui_addn_clk_1,
-   output                                       ui_addn_clk_2,
-   output                                       ui_addn_clk_3,
-   output                                       ui_addn_clk_4,
    output                                       mmcm_locked,
    
    input                                        aresetn,
+   input                                        app_sr_req,
+   input                                        app_ref_req,
+   input                                        app_zq_req,
    output                                       app_sr_active,
    output                                       app_ref_ack,
    output                                       app_zq_ack,
@@ -690,14 +621,6 @@ module mig_7series_mig #
    
    output                                       init_calib_complete,
    
-   output [11:0]                                 device_temp,
-`ifdef SKIP_CALIB
-   output                                      calib_tap_req,
-   input                                       calib_tap_load,
-   input [6:0]                                 calib_tap_addr,
-   input [7:0]                                 calib_tap_val,
-   input                                       calib_tap_load_done,
-`endif
       
 
    // System reset - Default polarity of sys_rst pin is Active Low.
@@ -737,15 +660,9 @@ module mig_7series_mig #
                                                  // Enable or disable the temp monitor module
   localparam tTEMPSAMPLE           = 10000000;   // sample every 10 us
   localparam XADC_CLK_PERIOD       = 5000;       // Use 200 MHz IODELAYCTRL clock
-  `ifdef SKIP_CALIB
-  localparam SKIP_CALIB = "TRUE";
-  `else
-  localparam SKIP_CALIB = "FALSE";
-  `endif
       
 
-  localparam TAPSPERKCLK = (56*MMCM_MULT_F)/nCK_PER_CLK;
-  
+  localparam TAPSPERKCLK = 56;
 
   // Wire declarations
       
@@ -775,7 +692,9 @@ module mig_7series_mig #
   
   wire [(2*nCK_PER_CLK)-1:0]            app_ecc_multiple_err;
   wire [(2*nCK_PER_CLK)-1:0]            app_ecc_single_err;
-  wire                                ddr3_parity;
+  wire                                ddr_mem_interface_reset_n;
+      
+  wire                                ddr_mem_interface_parity;
       // AXI CTRL port
   wire                              s_axi_ctrl_awvalid;
   wire                              s_axi_ctrl_awready;
@@ -879,9 +798,9 @@ module mig_7series_mig #
   wire [5:0]                        dbg_data_offset_1;
   wire [5:0]                        dbg_data_offset_2;
 
-  wire [390:0]                      ddr3_ila_wrpath_int;
-  wire [1023:0]                     ddr3_ila_rdpath_int;
-  wire [119:0]                      ddr3_ila_basic_int;
+  wire [390:0]                      ddr_mem_interface_ila_wrpath_int;
+  wire [1023:0]                     ddr_mem_interface_ila_rdpath_int;
+  wire [119:0]                      ddr_mem_interface_ila_basic_int;
   wire [(6*DQS_WIDTH*RANKS)-1:0] dbg_prbs_final_dqs_tap_cnt_r_int;
   wire [(6*DQS_WIDTH*RANKS)-1:0] dbg_prbs_first_edge_taps_int;
   wire [(6*DQS_WIDTH*RANKS)-1:0] dbg_prbs_second_edge_taps_int;
@@ -898,7 +817,6 @@ module mig_7series_mig #
   assign sys_clk_n = 1'b0;
   assign clk_ref_p = 1'b0;
   assign clk_ref_n = 1'b0;
-  assign device_temp = device_temp_s;
       
 
   generate
@@ -912,14 +830,11 @@ module mig_7series_mig #
     (
      .TCQ                       (TCQ),
      .IODELAY_GRP0              (IODELAY_GRP0),
-     .IODELAY_GRP1              (IODELAY_GRP1),
      .REFCLK_TYPE               (REFCLK_TYPE),
      .SYSCLK_TYPE               (SYSCLK_TYPE),
      .SYS_RST_PORT              (SYS_RST_PORT),
      .RST_ACT_LOW               (RST_ACT_LOW),
-     .DIFF_TERM_REFCLK          (DIFF_TERM_REFCLK),
-     .FPGA_SPEED_GRADE          (FPGA_SPEED_GRADE),
-     .REF_CLK_MMCM_IODELAY_CTRL (REF_CLK_MMCM_IODELAY_CTRL)
+     .DIFF_TERM_REFCLK          (DIFF_TERM_REFCLK)
      )
     u_iodelay_ctrl
       (
@@ -938,7 +853,7 @@ module mig_7series_mig #
      .SYSCLK_TYPE      (SYSCLK_TYPE),
      .DIFF_TERM_SYSCLK (DIFF_TERM_SYSCLK)
      )
-    u_ddr3_clk_ibuf
+    u_ddr_mem_interface_clk_ibuf
       (
        .sys_clk_p        (sys_clk_p),
        .sys_clk_n        (sys_clk_n),
@@ -974,36 +889,25 @@ module mig_7series_mig #
          
   mig_7series_v4_2_infrastructure #
     (
-     .TCQ                 (TCQ),
-     .nCK_PER_CLK         (nCK_PER_CLK),
-     .CLKIN_PERIOD        (CLKIN_PERIOD),
-     .SYSCLK_TYPE         (SYSCLK_TYPE),
-     .UI_EXTRA_CLOCKS     (UI_EXTRA_CLOCKS),
-     .CLKFBOUT_MULT       (CLKFBOUT_MULT),
-     .DIVCLK_DIVIDE       (DIVCLK_DIVIDE),
-     .CLKOUT0_PHASE       (CLKOUT0_PHASE),
-     .CLKOUT0_DIVIDE      (CLKOUT0_DIVIDE),
-     .CLKOUT1_DIVIDE      (CLKOUT1_DIVIDE),
-     .CLKOUT2_DIVIDE      (CLKOUT2_DIVIDE),
-     .CLKOUT3_DIVIDE      (CLKOUT3_DIVIDE),
-     .MMCM_VCO            (MMCM_VCO),
-     .MMCM_MULT_F         (MMCM_MULT_F),
-     .MMCM_DIVCLK_DIVIDE  (MMCM_DIVCLK_DIVIDE),
-     .MMCM_CLKOUT0_EN     (MMCM_CLKOUT0_EN),
-     .MMCM_CLKOUT1_EN     (MMCM_CLKOUT1_EN),
-     .MMCM_CLKOUT2_EN     (MMCM_CLKOUT2_EN),
-     .MMCM_CLKOUT3_EN     (MMCM_CLKOUT3_EN),
-     .MMCM_CLKOUT4_EN     (MMCM_CLKOUT4_EN),
-     .MMCM_CLKOUT0_DIVIDE (MMCM_CLKOUT0_DIVIDE),
-     .MMCM_CLKOUT1_DIVIDE (MMCM_CLKOUT1_DIVIDE),
-     .MMCM_CLKOUT2_DIVIDE (MMCM_CLKOUT2_DIVIDE),
-     .MMCM_CLKOUT3_DIVIDE (MMCM_CLKOUT3_DIVIDE),
-     .MMCM_CLKOUT4_DIVIDE (MMCM_CLKOUT4_DIVIDE),
-     .RST_ACT_LOW         (RST_ACT_LOW),
-     .tCK                 (tCK),
-     .MEM_TYPE            (DRAM_TYPE)
+     .TCQ                (TCQ),
+     .nCK_PER_CLK        (nCK_PER_CLK),
+     .CLKIN_PERIOD       (CLKIN_PERIOD),
+     .SYSCLK_TYPE        (SYSCLK_TYPE),
+     .CLKFBOUT_MULT      (CLKFBOUT_MULT),
+     .DIVCLK_DIVIDE      (DIVCLK_DIVIDE),
+     .CLKOUT0_PHASE      (CLKOUT0_PHASE),
+     .CLKOUT0_DIVIDE     (CLKOUT0_DIVIDE),
+     .CLKOUT1_DIVIDE     (CLKOUT1_DIVIDE),
+     .CLKOUT2_DIVIDE     (CLKOUT2_DIVIDE),
+     .CLKOUT3_DIVIDE     (CLKOUT3_DIVIDE),
+     .MMCM_VCO           (MMCM_VCO),
+     .MMCM_MULT_F        (MMCM_MULT_F),
+     .MMCM_DIVCLK_DIVIDE (MMCM_DIVCLK_DIVIDE),
+     .RST_ACT_LOW        (RST_ACT_LOW),
+     .tCK                (tCK),
+     .MEM_TYPE           (DRAM_TYPE)
      )
-    u_ddr3_infrastructure
+    u_ddr_mem_interface_infrastructure
       (
        // Outputs
        .rstdiv0          (rst),
@@ -1018,11 +922,11 @@ module mig_7series_mig #
        .psdone           (psdone),
        .iddr_rst         (iddr_rst),
 //       .auxout_clk       (),
-       .ui_addn_clk_0    (ui_addn_clk_0),
-       .ui_addn_clk_1    (ui_addn_clk_1),
-       .ui_addn_clk_2    (ui_addn_clk_2),
-       .ui_addn_clk_3    (ui_addn_clk_3),
-       .ui_addn_clk_4    (ui_addn_clk_4),
+       .ui_addn_clk_0    (),
+       .ui_addn_clk_1    (),
+       .ui_addn_clk_2    (),
+       .ui_addn_clk_3    (),
+       .ui_addn_clk_4    (),
        .pll_locked       (pll_locked),
        .mmcm_locked      (mmcm_locked),
        .rst_phaser_ref   (rst_phaser_ref),
@@ -1046,8 +950,6 @@ module mig_7series_mig #
      .BM_CNT_WIDTH                     (BM_CNT_WIDTH),
      .BURST_MODE                       (BURST_MODE),
      .BURST_TYPE                       (BURST_TYPE),
-     .CA_MIRROR                        (CA_MIRROR),
-     .DDR3_VDD_OP_VOLT                 (VDD_OP_VOLT),
      .CK_WIDTH                         (CK_WIDTH),
      .COL_WIDTH                        (COL_WIDTH),
      .CMD_PIPE_PLUS1                   (CMD_PIPE_PLUS1),
@@ -1079,13 +981,9 @@ module mig_7series_mig #
      .BANK_TYPE                        (BANK_TYPE),
      .DATA_IO_PRIM_TYPE                (DATA_IO_PRIM_TYPE),
      .IODELAY_GRP0                     (IODELAY_GRP0),
-     .IODELAY_GRP1                     (IODELAY_GRP1),
-     .FPGA_SPEED_GRADE                 (FPGA_SPEED_GRADE),
      .REG_CTRL                         (REG_CTRL),
      .RTT_NOM                          (RTT_NOM),
-     .RTT_WR                           (RTT_WR),
      .CL                               (CL),
-     .CWL                              (CWL),
      .tCK                              (tCK),
      .tCKE                             (tCKE),
      .tFAW                             (tFAW),
@@ -1161,10 +1059,10 @@ module mig_7series_mig #
      .CALIB_ROW_ADD                    (CALIB_ROW_ADD),
      .CALIB_COL_ADD                    (CALIB_COL_ADD),
      .CALIB_BA_ADD                     (CALIB_BA_ADD),
-     .IDELAY_ADJ                       (IDELAY_ADJ),
-     .FINE_PER_BIT                     (FINE_PER_BIT),
-     .CENTER_COMP_MODE                 (CENTER_COMP_MODE),
-     .PI_VAL_ADJ                       (PI_VAL_ADJ),
+     .IDELAY_ADJ                       ("OFF"),
+     .FINE_PER_BIT                     ("OFF"),
+     .CENTER_COMP_MODE                 ("OFF"),
+     .PI_VAL_ADJ                       ("OFF"),
      .SLOT_0_CONFIG                    (SLOT_0_CONFIG),
      .SLOT_1_CONFIG                    (SLOT_1_CONFIG),
      .MEM_ADDR_ORDER                   (MEM_ADDR_ORDER),
@@ -1186,8 +1084,8 @@ module mig_7series_mig #
      .USE_ODT_PORT                     (USE_ODT_PORT),
      .MASTER_PHY_CTL                   (PHY_CONTROL_MASTER_BANK),
      .TAPSPERKCLK                      (TAPSPERKCLK),
-     .SKIP_CALIB                       (SKIP_CALIB),
-     .FPGA_VOLT_TYPE                   (FPGA_VOLT_TYPE)
+     .SKIP_CALIB                       ("FALSE"),
+     .FPGA_VOLT_TYPE                   ("N")
      )
     u_memc_ui_top_axi
       (
@@ -1210,22 +1108,22 @@ module mig_7series_mig #
        .ref_dll_lock                     (ref_dll_lock),
 
 // Memory interface ports
-       .ddr_dq                           (ddr3_dq),
-       .ddr_dqs_n                        (ddr3_dqs_n),
-       .ddr_dqs                          (ddr3_dqs_p),
-       .ddr_addr                         (ddr3_addr),
-       .ddr_ba                           (ddr3_ba),
-       .ddr_cas_n                        (ddr3_cas_n),
-       .ddr_ck_n                         (ddr3_ck_n),
-       .ddr_ck                           (ddr3_ck_p),
-       .ddr_cke                          (ddr3_cke),
-       .ddr_cs_n                         (),
-       .ddr_dm                           (ddr3_dm),
-       .ddr_odt                          (ddr3_odt),
-       .ddr_ras_n                        (ddr3_ras_n),
-       .ddr_reset_n                      (ddr3_reset_n),
-       .ddr_parity                       (ddr3_parity),
-       .ddr_we_n                         (ddr3_we_n),
+       .ddr_dq                           (ddr_mem_interface_dq),
+       .ddr_dqs_n                        (ddr_mem_interface_dqs_n),
+       .ddr_dqs                          (ddr_mem_interface_dqs_p),
+       .ddr_addr                         (ddr_mem_interface_addr),
+       .ddr_ba                           (ddr_mem_interface_ba),
+       .ddr_cas_n                        (ddr_mem_interface_cas_n),
+       .ddr_ck_n                         (ddr_mem_interface_ck_n),
+       .ddr_ck                           (ddr_mem_interface_ck_p),
+       .ddr_cke                          (ddr_mem_interface_cke),
+       .ddr_cs_n                         (ddr_mem_interface_cs_n),
+       .ddr_dm                           (ddr_mem_interface_dm),
+       .ddr_odt                          (ddr_mem_interface_odt),
+       .ddr_ras_n                        (ddr_mem_interface_ras_n),
+       .ddr_reset_n                      (ddr_mem_interface_reset_n),
+       .ddr_parity                       (ddr_mem_interface_parity),
+       .ddr_we_n                         (ddr_mem_interface_we_n),
        .bank_mach_next                   (bank_mach_next),
 
 // Application interface ports
@@ -1233,21 +1131,11 @@ module mig_7series_mig #
        .app_ecc_single_err               (),
 
        .device_temp                      (device_temp_s),
-
-       // skip calibration ports
-       `ifdef SKIP_CALIB
-       .calib_tap_req                    (calib_tap_req),
-       .calib_tap_load                   (calib_tap_load),
-       .calib_tap_addr                   (calib_tap_addr),
-       .calib_tap_val                    (calib_tap_val),
-       .calib_tap_load_done              (calib_tap_load_done),
-       `else
        .calib_tap_req                    (),
        .calib_tap_load                   (1'b0),
        .calib_tap_addr                   (7'b0),
        .calib_tap_val                    (8'b0),
        .calib_tap_load_done              (1'b0),
-       `endif
 
 // Debug logic ports
        .dbg_idel_up_all                  (dbg_idel_up_all),
@@ -1390,7 +1278,7 @@ module mig_7series_mig #
        // Interrupt output
        .interrupt                        (interrupt),
        .init_calib_complete              (init_calib_complete),
-       .dbg_poc                          ()
+       .dbg_poc                          (dbg_poc)
        );
 
       
