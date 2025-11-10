@@ -52,11 +52,11 @@
 //  \   \         Application        : MIG
 //  /   /         Filename           : example_top.v
 // /___/   /\     Date Last Modified : $Date: 2011/06/02 08:35:03 $
-// \   \  /  \    Date Created       : Fri Oct 14 2011
+// \   \  /  \    Date Created       : Tue Sept 21 2010
 //  \___\/\___\
 //
 // Device           : 7 Series
-// Design Name      : DDR2 SDRAM
+// Design Name      : DDR3 SDRAM
 // Purpose          :
 //   Top-level  module. This module serves as an example,
 //   and allows the user to synthesize a self-contained design,
@@ -68,6 +68,7 @@
 // Revision History :
 //*****************************************************************************
 
+//`define SKIP_CALIB
 `timescale 1ps/1ps
 
 module example_top #
@@ -88,6 +89,16 @@ module example_top #
    //***************************************************************************
    // The following parameters refer to width of various ports
    //***************************************************************************
+   parameter CK_WIDTH              = 1,
+                                     // # of CK/CK# outputs to memory.
+   parameter nCS_PER_RANK          = 1,
+                                     // # of unique CS outputs per rank for phy
+   parameter CKE_WIDTH             = 1,
+                                     // # of CKE outputs to memory.
+   parameter DM_WIDTH              = 2,
+                                     // # of DM (data mask)
+   parameter ODT_WIDTH             = 1,
+                                     // # of ODT outputs to memory.
    parameter BANK_WIDTH            = 3,
                                      // # of memory Bank Address bits.
    parameter COL_WIDTH             = 10,
@@ -107,9 +118,9 @@ module example_top #
    parameter nBANK_MACHS           = 8,
    parameter RANKS                 = 1,
                                      // # of Ranks.
-   parameter ROW_WIDTH             = 13,
+   parameter ROW_WIDTH             = 15,
                                      // # of memory Row Address bits.
-   parameter ADDR_WIDTH            = 27,
+   parameter ADDR_WIDTH            = 29,
                                      // # = RANK_WIDTH + BANK_WIDTH
                                      //     + ROW_WIDTH + COL_WIDTH;
                                      // Chip Select is always tied to low for
@@ -126,6 +137,60 @@ module example_top #
                                      // Burst Length (Mode Register).
                                      // # = "8", "4".
 
+   
+   //***************************************************************************
+   // The following parameters are multiplier and divisor factors for PLLE2.
+   // Based on the selected design frequency these parameters vary.
+   //***************************************************************************
+   parameter CLKIN_PERIOD          = 10000,
+                                     // Input Clock Period
+   parameter CLKFBOUT_MULT         = 8,
+                                     // write PLL VCO multiplier
+   parameter DIVCLK_DIVIDE         = 1,
+                                     // write PLL VCO divisor
+   parameter CLKOUT0_PHASE         = 0.0,
+                                     // Phase for PLL output clock (CLKOUT0)
+   parameter CLKOUT0_DIVIDE        = 1,
+                                     // VCO output divisor for PLL output clock (CLKOUT0)
+   parameter CLKOUT1_DIVIDE        = 2,
+                                     // VCO output divisor for PLL output clock (CLKOUT1)
+   parameter CLKOUT2_DIVIDE        = 32,
+                                     // VCO output divisor for PLL output clock (CLKOUT2)
+   parameter CLKOUT3_DIVIDE        = 8,
+                                     // VCO output divisor for PLL output clock (CLKOUT3)
+   parameter MMCM_VCO              = 800,
+                                     // Max Freq (MHz) of MMCM VCO
+   parameter MMCM_MULT_F           = 8,
+                                     // write MMCM VCO multiplier
+   parameter MMCM_DIVCLK_DIVIDE    = 1,
+                                     // write MMCM VCO divisor
+   parameter MMCM_CLKOUT0_EN       = "FALSE",
+                                     // "TRUE" - MMCM output clock (CLKOUT0) is enabled
+                                     // "FALSE" - MMCM output clock (CLKOUT0) is disabled
+   parameter MMCM_CLKOUT1_EN       = "FALSE",
+                                     // "TRUE" - MMCM output clock (CLKOUT1) is enabled
+                                     // "FALSE" - MMCM output clock (CLKOUT1) is disabled
+   parameter MMCM_CLKOUT2_EN       = "FALSE",
+                                     // "TRUE" - MMCM output clock (CLKOUT2) is enabled
+                                     // "FALSE" - MMCM output clock (CLKOUT2) is disabled
+   parameter MMCM_CLKOUT3_EN       = "FALSE",
+                                     // "TRUE" - MMCM output clock (CLKOUT3) is enabled
+                                     // "FALSE" - MMCM output clock (CLKOUT3) is disabled
+   parameter MMCM_CLKOUT4_EN       = "FALSE",
+                                     // "TRUE" - MMCM output clock (CLKOUT4) is enabled
+                                     // "FALSE" - MMCM output clock (CLKOUT4) is disabled
+   parameter MMCM_CLKOUT0_DIVIDE   = 4,
+                                     // VCO output divisor for MMCM output clock (CLKOUT0)
+   parameter MMCM_CLKOUT1_DIVIDE   = 1,
+                                     // VCO output divisor for MMCM output clock (CLKOUT1)
+   parameter MMCM_CLKOUT2_DIVIDE   = 1,
+                                     // VCO output divisor for MMCM output clock (CLKOUT2)
+   parameter MMCM_CLKOUT3_DIVIDE   = 1,
+                                     // VCO output divisor for MMCM output clock (CLKOUT3)
+   parameter MMCM_CLKOUT4_DIVIDE   = 1,
+                                     // VCO output divisor for MMCM output clock (CLKOUT4)
+
+
    //***************************************************************************
    // Simulation parameters
    //***************************************************************************
@@ -138,7 +203,7 @@ module example_top #
    //***************************************************************************
    parameter TCQ                   = 100,
    
-
+   parameter DRAM_TYPE             = "DDR3",
 
    
    //***************************************************************************
@@ -151,73 +216,65 @@ module example_top #
    //***************************************************************************
    // AXI4 Shim parameters
    //***************************************************************************
-   
-   parameter UI_EXTRA_CLOCKS = "FALSE",
-                                     // Generates extra clocks as
-                                     // 1/2, 1/4 and 1/8 of fabrick clock.
-                                     // Valid for DDR2/DDR3 AXI interfaces
-                                     // based on GUI selection
-   parameter C_S_AXI_ID_WIDTH              = 4,
+   parameter C_S_AXI_ID_WIDTH              = 2,
                                              // Width of all master and slave ID signals.
                                              // # = >= 1.
-   parameter C_S_AXI_ADDR_WIDTH            = 27,
+   parameter C_S_AXI_ADDR_WIDTH            = 29,
                                              // Width of S_AXI_AWADDR, S_AXI_ARADDR, M_AXI_AWADDR and
                                              // M_AXI_ARADDR for all SI/MI slots.
                                              // # = 32.
-   parameter C_S_AXI_DATA_WIDTH            = 32,
+   parameter C_S_AXI_DATA_WIDTH            = 128,
                                              // Width of WDATA and RDATA on SI slot.
                                              // Must be <= APP_DATA_WIDTH.
                                              // # = 32, 64, 128, 256.
-   parameter C_S_AXI_SUPPORTS_NARROW_BURST = 0,
+   parameter C_S_AXI_SUPPORTS_NARROW_BURST = 1,
                                              // Indicates whether to instatiate upsizer
                                              // Range: 0, 1
-   parameter C_S_AXI_CTRL_ADDR_WIDTH       = 32,
-                                             // Width of AXI-4-Lite address bus
-   parameter C_S_AXI_CTRL_DATA_WIDTH       = 32,
-                                             // Width of AXI-4-Lite data buses
       
 
    //***************************************************************************
    // Debug parameters
    //***************************************************************************
-   parameter DEBUG_PORT            = "OFF"
+   parameter DEBUG_PORT            = "OFF",
                                      // # = "ON" Enable debug signals/controls.
                                      //   = "OFF" Disable debug signals/controls.
       
-//   parameter RST_ACT_LOW           = 1
+   parameter RST_ACT_LOW           = 1
                                      // =1 for active low reset,
                                      // =0 for active high.
    )
   (
 
    // Inouts
-   inout [15:0]                         ddr2_dq,
-   inout [1:0]                        ddr2_dqs_n,
-   inout [1:0]                        ddr2_dqs_p,
+   inout [15:0]                         ddr3_dq,
+   inout [1:0]                        ddr3_dqs_n,
+   inout [1:0]                        ddr3_dqs_p,
 
    // Outputs
-   output [12:0]                       ddr2_addr,
-   output [2:0]                      ddr2_ba,
-   output                                       ddr2_ras_n,
-   output                                       ddr2_cas_n,
-   output                                       ddr2_we_n,
+   output [14:0]                       ddr3_addr,
+   output [2:0]                      ddr3_ba,
+   output                                       ddr3_ras_n,
+   output                                       ddr3_cas_n,
+   output                                       ddr3_we_n,
+   output                                       ddr3_reset_n,
+   output [0:0]                        ddr3_ck_p,
+   output [0:0]                        ddr3_ck_n,
+   output [0:0]                       ddr3_cke,
    
-   output [0:0]                        ddr2_ck_p,
-   output [0:0]                        ddr2_ck_n,
-   output [0:0]                       ddr2_cke,
-   output [0:0]           ddr2_cs_n,
    
-   output [1:0]                        ddr2_dm,
+   output [1:0]                        ddr3_dm,
    
-   output [0:0]                       ddr2_odt,
+   output [0:0]                       ddr3_odt,
    
 
    // Inputs
+   
    // Single-ended system clock
    input                                        sys_clk_i,
+   
    // Single-ended iodelayctrl clk (reference clock)
    input                                        clk_ref_i,
-   
+
    output                                       tg_compare_error,
    output                                       init_calib_complete,
    
@@ -271,6 +328,11 @@ function integer clogb2 (input integer size);
       
   wire                              clk;
   wire                              rst;
+  wire                              ui_addn_clk_0;
+  wire                              ui_addn_clk_1;
+  wire                              ui_addn_clk_2;
+  wire                              ui_addn_clk_3;
+  wire                              ui_addn_clk_4;
   wire                              mmcm_locked;
   reg                               aresetn;
   wire                              app_sr_active;
@@ -339,6 +401,18 @@ function integer clogb2 (input integer size);
   wire [DBG_WR_STS_WIDTH-1:0]       dbg_wr_sts;
   wire                              dbg_rd_sts_vld;
   wire [DBG_RD_STS_WIDTH-1:0]       dbg_rd_sts;
+  wire [11:0]                           device_temp;
+  
+`ifdef SKIP_CALIB
+  // skip calibration wires
+  wire                          calib_tap_req;
+  reg                           calib_tap_load;
+  reg [6:0]                     calib_tap_addr;
+  reg [7:0]                     calib_tap_val;
+  reg                           calib_tap_load_done;
+`endif
+      
+  
 
 //***************************************************************************
 
@@ -358,39 +432,39 @@ function integer clogb2 (input integer size);
 // for connecting the memory controller to system.
 //***************************************************************************
 
-  mig_7series_normal_ord  #
-    (
-//     #parameters_mapping_user_design_top_instance#
-   .RST_ACT_LOW                      (RST_ACT_LOW)
-     )
-    u_mig_7series  (
+  mig_7series_mig u_design_1_mig_7series_0_0
+      (
+       
+       
 // Memory interface ports
-        .ddr_mem_interface_addr                 (ddr2_addr),
-        .ddr_mem_interface_ba                   (ddr2_ba),
-        .ddr_mem_interface_cas_n                (ddr2_cas_n),
-        .ddr_mem_interface_ck_n                 (ddr2_ck_n),
-        .ddr_mem_interface_ck_p                 (ddr2_ck_p),
-        .ddr_mem_interface_cke                  (ddr2_cke),
-        .ddr_mem_interface_ras_n                (ddr2_ras_n),
-        .ddr_mem_interface_we_n                 (ddr2_we_n),
-        .ddr_mem_interface_dq                   (ddr2_dq),
-        .ddr_mem_interface_dqs_n                (ddr2_dqs_n),
-        .ddr_mem_interface_dqs_p                (ddr2_dqs_p),
-        .init_calib_complete         
-        .ddr_mem_interface_cs_n                 (init_calib_complete),
-        .ddr_mem_interface_dm        
-        .ddr_mem_interface_odt                  (ddr2_cs_n),
-        .ddr_mem_interface_odt                  (ddr2_dm),
-        .ddr_mem_interface_odt                  (ddr2_odt),
+       .ddr3_addr                      (ddr3_addr),
+       .ddr3_ba                        (ddr3_ba),
+       .ddr3_cas_n                     (ddr3_cas_n),
+       .ddr3_ck_n                      (ddr3_ck_n),
+       .ddr3_ck_p                      (ddr3_ck_p),
+       .ddr3_cke                       (ddr3_cke),
+       .ddr3_ras_n                     (ddr3_ras_n),
+       .ddr3_we_n                      (ddr3_we_n),
+       .ddr3_dq                        (ddr3_dq),
+       .ddr3_dqs_n                     (ddr3_dqs_n),
+       .ddr3_dqs_p                     (ddr3_dqs_p),
+       .ddr3_reset_n                   (ddr3_reset_n),
+       .init_calib_complete            (init_calib_complete),
+      
+       
+       .ddr3_dm                        (ddr3_dm),
+       .ddr3_odt                       (ddr3_odt),
 // Application interface ports
        .ui_clk                         (clk),
        .ui_clk_sync_rst                (rst),
 
+       .ui_addn_clk_0                  (ui_addn_clk_0),
+       .ui_addn_clk_1                  (ui_addn_clk_1),
+       .ui_addn_clk_2                  (ui_addn_clk_2),
+       .ui_addn_clk_3                  (ui_addn_clk_3),
+       .ui_addn_clk_4                  (ui_addn_clk_4),
        .mmcm_locked                    (mmcm_locked),
        .aresetn                        (aresetn),
-       .app_sr_req                     (1'b0),
-       .app_ref_req                    (1'b0),
-       .app_zq_req                     (1'b0),
        .app_sr_active                  (app_sr_active),
        .app_ref_ack                    (app_ref_ack),
        .app_zq_ack                     (app_zq_ack),
@@ -444,6 +518,14 @@ function integer clogb2 (input integer size);
        .sys_clk_i                       (sys_clk_i),
 // Reference Clock Ports
        .clk_ref_i                      (clk_ref_i),
+       .device_temp            (device_temp),
+       `ifdef SKIP_CALIB
+       .calib_tap_req                    (calib_tap_req),
+       .calib_tap_load                   (calib_tap_load),
+       .calib_tap_addr                   (calib_tap_addr),
+       .calib_tap_val                    (calib_tap_val),
+       .calib_tap_load_done              (calib_tap_load_done),
+       `endif
       
        .sys_rst                        (sys_rst)
        );
@@ -568,6 +650,85 @@ function integer clogb2 (input integer size);
    assign dbg_po_f_stg23_sel      = 'b0;
    assign po_win_tg_rst           = 'b0;
    assign vio_tg_rst              = 'b0;
+`ifdef SKIP_CALIB
+  //***************************************************************************
+  // Skip calib test logic
+  //***************************************************************************
+
+  reg[3*DQS_WIDTH-1:0]        po_coarse_tap;
+  reg[6*DQS_WIDTH-1:0]        po_stg3_taps;
+  reg[6*DQS_WIDTH-1:0]        po_stg2_taps;
+  reg[6*DQS_WIDTH-1:0]        pi_stg2_taps;
+  reg[5*DQS_WIDTH-1:0]        idelay_taps;
+  reg[11:0]                   cal_device_temp;
+
+
+  always @(posedge clk) begin
+    // tap values from golden run (factory)
+    po_coarse_tap   <= #TCQ 'h2;
+    po_stg3_taps    <= #TCQ 'h0D;
+    po_stg2_taps    <= #TCQ 'h1D;
+    pi_stg2_taps    <= #TCQ 'h1E;
+    idelay_taps     <= #TCQ 'h08;
+        cal_device_temp <= #TCQ 'h000;
+  end
+
+  always @(posedge clk) begin
+    if (rst)
+      calib_tap_load <= #TCQ 1'b0;
+    else if (calib_tap_req)
+      calib_tap_load <= #TCQ 1'b1;
+  end
+
+  always @(posedge clk) begin
+    if (rst) begin
+      calib_tap_addr      <= #TCQ 'd0;
+      calib_tap_val       <= #TCQ po_coarse_tap[3*calib_tap_addr[6:3]+:3]; //'d1;
+      calib_tap_load_done <= #TCQ 1'b0;
+    end else if (calib_tap_load) begin
+      case (calib_tap_addr[2:0])
+        3'b000: begin
+          calib_tap_addr[2:0] <= #TCQ 3'b001;
+          calib_tap_val       <= #TCQ po_stg3_taps[6*calib_tap_addr[6:3]+:6]; //'d19;
+        end
+        3'b001: begin
+          calib_tap_addr[2:0] <= #TCQ 3'b010;
+          calib_tap_val       <= #TCQ po_stg2_taps[6*calib_tap_addr[6:3]+:6]; //'d45;
+        end
+        3'b010: begin
+          calib_tap_addr[2:0] <= #TCQ 3'b011;
+          calib_tap_val       <= #TCQ pi_stg2_taps[6*calib_tap_addr[6:3]+:6]; //'d20;
+        end
+        3'b011: begin
+          calib_tap_addr[2:0] <= #TCQ 3'b100;
+          calib_tap_val       <= #TCQ idelay_taps[5*calib_tap_addr[6:3]+:5]; //'d1;
+        end
+        3'b100: begin
+          if (calib_tap_addr[6:3] < DQS_WIDTH-1) begin
+            calib_tap_addr[2:0] <= #TCQ 3'b000;
+            calib_tap_val       <= #TCQ po_coarse_tap[3*(calib_tap_addr[6:3]+1)+:3]; //'d1;
+            calib_tap_addr[6:3] <= #TCQ calib_tap_addr[6:3] + 1;
+          end else begin
+            calib_tap_addr[2:0] <= #TCQ 3'b110;
+            calib_tap_val       <= #TCQ cal_device_temp[7:0];
+            calib_tap_addr[6:3] <= #TCQ 4'b1111;
+          end
+        end
+        3'b110: begin
+            calib_tap_addr[2:0] <= #TCQ 3'b111;
+            calib_tap_val       <= #TCQ {4'h0,cal_device_temp[11:8]};
+            calib_tap_addr[6:3] <= #TCQ 4'b1111;
+        end
+        3'b111: begin
+            calib_tap_load_done <= #TCQ 1'b1;
+        end
+      endcase
+    end
+  end
+
+
+//****************skip calib test logic end**********************************
+`endif    
 
 endmodule
 
