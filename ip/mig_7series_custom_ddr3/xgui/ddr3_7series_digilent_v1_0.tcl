@@ -2,24 +2,20 @@
 proc init_gui { IPINST } {
   ipgui::add_param $IPINST -name "Component_Name"
   #Adding Page
-  set Page_0 [ipgui::add_page $IPINST -name "Page 0" -display_name {General Settings}]
-  ipgui::add_param $IPINST -name "SIMULATION" -parent ${Page_0} -widget comboBox
-  ipgui::add_param $IPINST -name "nBANK_MACHS" -parent ${Page_0} -widget comboBox
-  ipgui::add_param $IPINST -name "RST_ACT_LOW" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "ORDERING" -parent ${Page_0} -widget comboBox
-  ipgui::add_param $IPINST -name "C_S_AXI_MEM_SIZE" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "DDR3_BOARD_INTERFACE" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "tCK" -parent ${Page_0}
+  ipgui::add_page $IPINST -name "Page 0" -display_name {General Settings}
 
   #Adding Page
   set AXI_Interface [ipgui::add_page $IPINST -name "AXI Interface"]
   ipgui::add_param $IPINST -name "C_S_AXI_ADDR_WIDTH" -parent ${AXI_Interface}
   ipgui::add_param $IPINST -name "C_S_AXI_CTRL_ADDR_WIDTH" -parent ${AXI_Interface}
   ipgui::add_param $IPINST -name "C_S_AXI_SUPPORTS_NARROW_BURST" -parent ${AXI_Interface}
-  ipgui::add_param $IPINST -name "UI_EXTRA_CLOCKS" -parent ${AXI_Interface}
   ipgui::add_param $IPINST -name "C_S_AXI_DATA_WIDTH" -parent ${AXI_Interface} -widget comboBox
   ipgui::add_param $IPINST -name "C_S_AXI_ID_WIDTH" -parent ${AXI_Interface}
 
+  ipgui::add_param $IPINST -name "C_S_AXI_MEM_SIZE"
+  ipgui::add_param $IPINST -name "C_S_AXI_BASEADDR"
+  ipgui::add_param $IPINST -name "C_MC_nCK_PER_CLK"
+  ipgui::add_param $IPINST -name "C_RD_WR_ARB_ALGORITHM"
 
 }
 
@@ -1424,6 +1420,15 @@ proc update_PARAM_VALUE.USER_REFRESH { PARAM_VALUE.USER_REFRESH } {
 
 proc validate_PARAM_VALUE.USER_REFRESH { PARAM_VALUE.USER_REFRESH } {
 	# Procedure called to validate USER_REFRESH
+	return true
+}
+
+proc update_PARAM_VALUE.USE_BOARD_FLOW { PARAM_VALUE.USE_BOARD_FLOW } {
+	# Procedure called to update USE_BOARD_FLOW when any of the dependent parameters in the arguments change
+}
+
+proc validate_PARAM_VALUE.USE_BOARD_FLOW { PARAM_VALUE.USE_BOARD_FLOW } {
+	# Procedure called to validate USE_BOARD_FLOW
 	return true
 }
 

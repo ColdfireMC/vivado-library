@@ -596,8 +596,8 @@
       </spirit:portMaps>
       <spirit:parameters>
         <spirit:parameter>
-          <spirit:name>BOARD.ASSOC_INTERFACE</spirit:name>
-          <spirit:value spirit:id="BUSIFPARAM_VALUE.DDR3.BOARD.ASSOC_INTERFACE">DDR3_BOARD_INTERFACE</spirit:value>
+          <spirit:name>BOARD.ASSOCIATED_PARAM</spirit:name>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.DDR3.BOARD.ASSOCIATED_PARAM">DDR3_BOARD_INTERFACE</spirit:value>
         </spirit:parameter>
       </spirit:parameters>
     </spirit:busInterface>
@@ -626,6 +626,13 @@
           <spirit:value spirit:id="BUSIFPARAM_VALUE.UI_ADDN_CLK_0.ASSOCIATED_CLKEN">ui_addn_clk_4</spirit:value>
         </spirit:parameter>
       </spirit:parameters>
+      <spirit:vendorExtensions>
+        <xilinx:busInterfaceInfo>
+          <xilinx:enablement>
+            <xilinx:isEnabled xilinx:id="BUSIF_ENABLEMENT.ui_addn_clk_0">false</xilinx:isEnabled>
+          </xilinx:enablement>
+        </xilinx:busInterfaceInfo>
+      </spirit:vendorExtensions>
     </spirit:busInterface>
     <spirit:busInterface>
       <spirit:name>ui_addn_clk_1</spirit:name>
@@ -770,7 +777,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>1405b292</spirit:value>
+            <spirit:value>2db1abfc</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -800,7 +807,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>0e7ee85d</spirit:value>
+            <spirit:value>8a71006d</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -814,7 +821,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>205a03a2</spirit:value>
+            <spirit:value>5735c9da</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1299,6 +1306,7 @@
           <xilinx:portInfo>
             <xilinx:enablement>
               <xilinx:presence>required</xilinx:presence>
+              <xilinx:isEnabled xilinx:id="PORT_ENABLEMENT.app_sr_active">false</xilinx:isEnabled>
             </xilinx:enablement>
           </xilinx:portInfo>
         </spirit:vendorExtensions>
@@ -1319,6 +1327,7 @@
           <xilinx:portInfo>
             <xilinx:enablement>
               <xilinx:presence>required</xilinx:presence>
+              <xilinx:isEnabled xilinx:id="PORT_ENABLEMENT.app_ref_ack">false</xilinx:isEnabled>
             </xilinx:enablement>
           </xilinx:portInfo>
         </spirit:vendorExtensions>
@@ -1339,6 +1348,7 @@
           <xilinx:portInfo>
             <xilinx:enablement>
               <xilinx:presence>required</xilinx:presence>
+              <xilinx:isEnabled xilinx:id="PORT_ENABLEMENT.app_zq_ack">false</xilinx:isEnabled>
             </xilinx:enablement>
           </xilinx:portInfo>
         </spirit:vendorExtensions>
@@ -3461,11 +3471,6 @@
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>src/mig_7series_mig_impl.xdc</spirit:name>
-        <spirit:userFileType>xdc</spirit:userFileType>
-        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
         <spirit:name>src/mig_7series_mig.xdc</spirit:name>
         <spirit:userFileType>xdc</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
@@ -3489,6 +3494,15 @@
         <spirit:name>src/mig_7series_v4_2_tempmon.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>src/mig_7series_mig_board.xdc</spirit:name>
+        <spirit:userFileType>xdc</spirit:userFileType>
+        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>utils/board/board.xit</spirit:name>
+        <spirit:userFileType>xit</spirit:userFileType>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/design_1_mig_7series_0_0_mig.v</spirit:name>
@@ -3995,15 +4009,17 @@
       <spirit:file>
         <spirit:name>xgui/ddr3_7series_digilent_v1_0.tcl</spirit:name>
         <spirit:fileType>tclSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_0e7ee85d</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_8a71006d</spirit:userFileType>
         <spirit:userFileType>XGUI_VERSION_2</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
       <spirit:name>xilinx_utilityxitfiles_1_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>src/board.xit</spirit:name>
+        <spirit:name>utils/board/board.xit</spirit:name>
         <spirit:userFileType>xit</spirit:userFileType>
+        <spirit:userFileType>USED_IN_board</spirit:userFileType>
+        <spirit:userFileType>USED_IN_synthesis</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -4071,7 +4087,7 @@
       </spirit:file>
     </spirit:fileSet>
   </spirit:fileSets>
-  <spirit:description>Based on MIG 7 Series, this is a native IP is a memory controller for the Digilent Boards based on Xilinx 7 Series FPPGAS</spirit:description>
+  <spirit:description>Based on MIG 7 Series, this is a native IP is a memory controller for the Digilent Boards based on Xilinx 7 Series FPGAS</spirit:description>
   <spirit:parameters>
     <spirit:parameter>
       <spirit:name>Component_Name</spirit:name>
@@ -5018,10 +5034,14 @@
       <spirit:name>DDR3_BOARD_INTERFACE</spirit:name>
       <spirit:displayName>Ddr3 Board Interface</spirit:displayName>
       <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.DDR3_BOARD_INTERFACE">Custom</spirit:value>
+    </spirit:parameter>
+    <spirit:parameter>
+      <spirit:name>USE_BOARD_FLOW</spirit:name>
+      <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.USE_BOARD_FLOW">TRUE</spirit:value>
       <spirit:vendorExtensions>
         <xilinx:parameterInfo>
           <xilinx:enablement>
-            <xilinx:isEnabled xilinx:id="PARAM_ENABLEMENT.DDR3_BOARD_INTERFACE">false</xilinx:isEnabled>
+            <xilinx:isEnabled xilinx:id="PARAM_ENABLEMENT.USE_BOARD_FLOW">false</xilinx:isEnabled>
           </xilinx:enablement>
         </xilinx:parameterInfo>
       </spirit:vendorExtensions>
@@ -5045,24 +5065,25 @@
         <xilinx:taxonomy>/Memories_&amp;_Storage_Elements/Memory_Interface_Generators</xilinx:taxonomy>
       </xilinx:taxonomies>
       <xilinx:displayName>DDR3 SDRAM Memory Controller for Digilent Boards</xilinx:displayName>
+      <xilinx:autoFamilySupportLevel>level_0</xilinx:autoFamilySupportLevel>
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
-      <xilinx:coreRevision>17</xilinx:coreRevision>
+      <xilinx:coreRevision>24</xilinx:coreRevision>
       <xilinx:upgrades>
         <xilinx:canUpgradeFrom>user.org:user:mig_7series_normal_ord:1.0</xilinx:canUpgradeFrom>
         <xilinx:canUpgradeFrom>user.org:user:mig_7series_custom:1.0</xilinx:canUpgradeFrom>
         <xilinx:canUpgradeFrom>user.org:user:ddr_7series_digilent:1.0</xilinx:canUpgradeFrom>
         <xilinx:canUpgradeFrom>user.org:user:ddr2_7series_digilent:1.0</xilinx:canUpgradeFrom>
       </xilinx:upgrades>
-      <xilinx:coreCreationDateTime>2025-09-03T00:40:36Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2025-12-05T18:37:19Z</xilinx:coreCreationDateTime>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
-      <xilinx:xilinxVersion>2025.1</xilinx:xilinxVersion>
-      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="4c34ebc9"/>
+      <xilinx:xilinxVersion>2025.2</xilinx:xilinxVersion>
+      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="941ad986"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="8225877e"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="6ce18964"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="3def67b4"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="ab61bd5a"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="73a5ca82"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="e1ec2423"/>
-      <xilinx:checksum xilinx:scope="parameters" xilinx:value="2cd7f3d9"/>
+      <xilinx:checksum xilinx:scope="parameters" xilinx:value="fd456d7b"/>
       <xilinx:targetDRCs>
         <xilinx:targetDRC xilinx:tool="ipi">
           <xilinx:targetDRCOption xilinx:name="ignore_freq_hz" xilinx:value="false"/>
